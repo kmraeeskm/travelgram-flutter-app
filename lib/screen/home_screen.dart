@@ -1,27 +1,15 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'dart:math';
+
 import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/user_provider.dart';
-
-class Post {
-  final String name;
-  final String location;
-  final String imageurl;
-  final String bio;
-  final String dpurl;
-
-  Post({
-    required this.name,
-    required this.location,
-    required this.imageurl,
-    required this.bio,
-    required this.dpurl,
-  });
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
@@ -32,43 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  List<Post> _posts = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchPosts();
-  }
-
-  Future<void> _fetchPosts() async {
-    try {
-      final postDocs =
-          await FirebaseFirestore.instance.collection('posts').get();
-
-      for (var postDoc in postDocs.docs) {
-        final userId = postDoc['uId'];
-
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
-        final userData = userDoc.data() as Map<String, dynamic>;
-        final post = Post(
-          dpurl: userData['photourl'],
-          bio: postDoc['description'],
-          imageurl: postDoc['imageUrl'],
-          location: postDoc['location'],
-          name: userData['username'],
-        );
-        _posts.add(post);
-      }
-
-      setState(() {});
-    } catch (e) {
-      print('Error fetching posts: $e');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -91,20 +42,38 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             width: 16,
           ),
+          AppBarIcon(
+            iconData: Boxicons.bx_message,
+            color: Colors.white,
+            iconColor: Colors.black,
+          ),
+          SizedBox(
+            width: 16,
+          ),
         ],
       ),
-      body: ListView.builder(
-        cacheExtent: 30,
-        itemCount: _posts.length,
-        itemBuilder: (context, index) {
-          final post = _posts[index];
-          return PostBox(
-            dpurl: post.dpurl,
-            bio: post.bio,
-            imageurl: post.imageurl,
-            location: post.location,
-            name: post.name,
-          );
+      body: FutureBuilder<QuerySnapshot>(
+        future: FirebaseFirestore.instance.collection('posts').get(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return ListView.builder(
+              cacheExtent: 30,
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                var post = snapshot.data!.docs[index];
+
+                return PostBox(
+                  pid: post['postId'],
+                  dpurl: post['proPic'],
+                  bio: post['description'],
+                  imageurl: post['imageUrl'],
+                  location: post['location'],
+                  name: post['name'],
+                );
+              },
+            );
+          }
+          return Container();
         },
       ),
     );
@@ -112,22 +81,69 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class PostBox extends StatelessWidget {
-  const PostBox({
+  final user = FirebaseAuth.instance.currentUser!;
+
+  PostBox({
     super.key,
     required this.name,
     required this.location,
     required this.imageurl,
     required this.dpurl,
     required this.bio,
+    required this.pid,
   });
   final String name;
   final String location;
   final String imageurl;
   final String bio;
   final String dpurl;
+  final String pid;
 
   @override
   Widget build(BuildContext context) {
+    Widget _buildListItem(String title) {
+      return Column(
+        children: [
+          Container(
+            height: 48,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(child: Text(title)),
+              ],
+            ),
+          ),
+          const Divider(height: 0.5),
+        ],
+      );
+    }
+
+    _showListAlert(BuildContext context) {
+      showPlatformDialog(
+        context: context,
+        builder: (_) => BasicDialogAlert(
+          title: Text("Select action"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _buildListItem("Share"),
+                _buildListItem("Report"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            BasicDialogAction(
+              title: Text("Cancel"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
       child: Container(
@@ -179,7 +195,11 @@ class PostBox extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Icon(Boxicons.bx_dots_horizontal),
+                  GestureDetector(
+                      onTap: () {
+                        _showListAlert(context);
+                      },
+                      child: Icon(Boxicons.bx_dots_horizontal)),
                 ],
               ),
               SizedBox(
@@ -208,10 +228,53 @@ class PostBox extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(
-                        Boxicons.bx_heart,
-                        color: Colors.red,
-                      ),
+                      StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(pid)
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (!snapshot.hasData) {
+                              return CircularProgressIndicator();
+                            }
+                            Map<String, dynamic> data =
+                                snapshot.data!.data() as Map<String, dynamic>;
+                            int likesCount = data['likes'] != null
+                                ? data['likes'].length
+                                : 0;
+                            bool isLiked = data['likes'] != null
+                                ? data['likes'].contains(user.uid)
+                                : false;
+                            return Column(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    DocumentReference postRef =
+                                        FirebaseFirestore.instance
+                                            .collection('posts')
+                                            .doc(pid);
+                                    if (isLiked) {
+                                      postRef.update({
+                                        'likes':
+                                            FieldValue.arrayRemove([user.uid])
+                                      });
+                                    } else {
+                                      postRef.update({
+                                        'likes':
+                                            FieldValue.arrayUnion([user.uid])
+                                      });
+                                    }
+                                  },
+                                  icon: Icon(
+                                    Boxicons.bx_heart,
+                                    color: isLiked ? Colors.red : Colors.black,
+                                  ),
+                                ),
+                                Text('$likesCount')
+                              ],
+                            );
+                          }),
                       SizedBox(
                         width: 16,
                       ),

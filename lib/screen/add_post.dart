@@ -100,6 +100,8 @@ class _AddPostState extends State<AddPost> {
           'time': DateTime.now(),
           'description': _descController.text,
           'name': snapd['username'],
+          'proPic': snapd['photourl'],
+          'likes': [],
         });
       } catch (e) {
         print(e.toString());
