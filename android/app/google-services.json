@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "57592599851",
+    "project_id": "travel-mind",
+    "storage_bucket": "travel-mind.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57592599851:android:a925091c8ce3595362616e",
+        "android_client_info": {
+          "package_name": "com.example.instagram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9RUBIHZjhHS8ODikUaIW095DR5Z834ls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "57592599851-qed076vu9tlhaqdmnbl64kdv459qvdho.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.instagram"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:57592599851:android:829f21dc47fa2d9462616e",
+        "android_client_info": {
+          "package_name": "com.example.travelgram"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9RUBIHZjhHS8ODikUaIW095DR5Z834ls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "57592599851-qed076vu9tlhaqdmnbl64kdv459qvdho.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.instagram"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
