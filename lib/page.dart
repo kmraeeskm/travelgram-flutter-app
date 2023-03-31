@@ -21,8 +21,9 @@ class Index_PageState extends State<IndexPage> {
   int cIndex = 0;
   List pages = [
     HomeScreen(),
-    AddPost(),
     Explore(),
+    AddPost(),
+    ProfilePage(),
     ProfilePage(),
   ];
 
@@ -35,6 +36,7 @@ class Index_PageState extends State<IndexPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: pages[cIndex],
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(
@@ -70,7 +72,7 @@ class Index_PageState extends State<IndexPage> {
                   onTap(1);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_navigation,
+                  iconData: Boxicons.bx_compass,
                   color: cIndex == 1 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 1 ? Colors.white : Colors.black,
                 ),
@@ -90,9 +92,19 @@ class Index_PageState extends State<IndexPage> {
                   onTap(3);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.person,
+                  iconData: Boxicons.bx_message,
                   color: cIndex == 3 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 3 ? Colors.white : Colors.black,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  onTap(4);
+                },
+                child: AppBarIcon(
+                  iconData: CupertinoIcons.person,
+                  color: cIndex == 4 ? Color(0xFFbd91d4) : Colors.white,
+                  iconColor: cIndex == 4 ? Colors.white : Colors.black,
                 ),
               ),
             ],

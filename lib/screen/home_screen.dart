@@ -1,19 +1,74 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:boxicons/boxicons.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/user_provider.dart';
 
+class Post {
+  final String name;
+  final String location;
+  final String imageurl;
+  final String bio;
+  final String dpurl;
+
+  Post({
+    required this.name,
+    required this.location,
+    required this.imageurl,
+    required this.bio,
+    required this.dpurl,
+  });
+}
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  List<Post> _posts = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosts();
+  }
+
+  Future<void> _fetchPosts() async {
+    try {
+      final postDocs =
+          await FirebaseFirestore.instance.collection('posts').get();
+
+      for (var postDoc in postDocs.docs) {
+        final userId = postDoc['uId'];
+
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        final userData = userDoc.data() as Map<String, dynamic>;
+        final post = Post(
+          dpurl: userData['photourl'],
+          bio: postDoc['description'],
+          imageurl: postDoc['imageUrl'],
+          location: postDoc['location'],
+          name: userData['username'],
+        );
+        _posts.add(post);
+      }
+
+      setState(() {});
+    } catch (e) {
+      print('Error fetching posts: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -36,20 +91,20 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             width: 16,
           ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
         ],
       ),
       body: ListView.builder(
-        itemCount: 4,
+        cacheExtent: 30,
+        itemCount: _posts.length,
         itemBuilder: (context, index) {
-          return PostBox();
+          final post = _posts[index];
+          return PostBox(
+            dpurl: post.dpurl,
+            bio: post.bio,
+            imageurl: post.imageurl,
+            location: post.location,
+            name: post.name,
+          );
         },
       ),
     );
@@ -59,7 +114,17 @@ class _HomeScreenState extends State<HomeScreen> {
 class PostBox extends StatelessWidget {
   const PostBox({
     super.key,
+    required this.name,
+    required this.location,
+    required this.imageurl,
+    required this.dpurl,
+    required this.bio,
   });
+  final String name;
+  final String location;
+  final String imageurl;
+  final String bio;
+  final String dpurl;
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +152,14 @@ class PostBox extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 20,
-                        backgroundImage: NetworkImage(
-                          'https://wallpaperaccess.com/full/872402.jpg',
+                        child: ClipOval(
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: dpurl,
+                            fit: BoxFit.cover,
+                            width: 36,
+                            height: 36,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -97,9 +168,9 @@ class PostBox extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Selena Caramoy'),
+                          Text(name),
                           Text(
-                            '1hr ago',
+                            location,
                             style: TextStyle(
                               color: Colors.black38,
                             ),
@@ -114,19 +185,21 @@ class PostBox extends StatelessWidget {
               SizedBox(
                 height: 16,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image(
-                  image: NetworkImage(
-                      'https://wallpaperaccess.com/full/872402.jpg'),
+              Container(
+                height: 400,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: imageurl,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               SizedBox(
                 height: 16,
               ),
-              Text(
-                "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.",
-              ),
+              Text(bio),
               SizedBox(
                 height: 16,
               ),

@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last
 
 import 'dart:io';
 import 'package:boxicons/boxicons.dart';
@@ -7,6 +7,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:travelgram/auth/user_provider.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/utils/button_widget.dart';
 import 'package:path/path.dart';
@@ -20,6 +25,8 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
+  String c = '';
+  String p = '';
   final TextEditingController _descController = TextEditingController();
 
   PlatformFile? pickedFile;
@@ -34,6 +41,35 @@ class _AddPostState extends State<AddPost> {
     setState(() => pickedFile = path);
   }
 
+  getUserLocation() async {
+    PermissionStatus status = await Permission.locationWhenInUse.status;
+    if (status.isDenied) {
+      status = await Permission.locationWhenInUse.request();
+    }
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    List<Placemark> placemarks = await GeocodingPlatform.instance
+        .placemarkFromCoordinates(position.latitude, position.longitude);
+    Placemark placemark = placemarks[0];
+    print(placemark);
+    String city = '${placemark.locality}';
+    String administrativeArea = '${placemark.administrativeArea}';
+    setState(() {
+      c = city;
+      p = administrativeArea;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      getUserLocation();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future uploadFile() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
@@ -41,40 +77,49 @@ class _AddPostState extends State<AddPost> {
         .collection('users')
         .doc(user.uid)
         .get();
-    final file = File(pickedFile!.path!);
-    final destination = 'posts/${pickedFile!.name}';
+    var data = snap.data();
+    if (data != null) {
+      Map<String, dynamic> snapd = data as Map<String, dynamic>;
+      // rest of your code
+      final file = File(pickedFile!.path!);
+      final destination = 'posts/${pickedFile!.name}';
 
-    task = FirebaseApi.uploadFile(destination, file);
-    setState(() {});
+      task = FirebaseApi.uploadFile(destination, file);
+      setState(() {});
 
-    final snapshot = await task!.whenComplete(() {});
-    final urlDownload = await snapshot.ref.getDownloadURL();
+      final snapshot = await task!.whenComplete(() {});
+      final urlDownload = await snapshot.ref.getDownloadURL();
 
-    String postId = const Uuid().v1();
-    try {
-      _firestore.collection('posts').doc(postId).set({
-        'postId': postId,
-        'uId': user.uid,
-        'imageUrl': urlDownload,
-        'location': 'location',
-        'time': DateTime.now(),
-        'description': _descController.text,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
+      String postId = const Uuid().v1();
+      try {
+        _firestore.collection('posts').doc(postId).set({
+          'postId': postId,
+          'uId': user.uid,
+          'imageUrl': urlDownload,
+          'location': '$c,$p',
+          'time': DateTime.now(),
+          'description': _descController.text,
+          'name': snapd['username'],
+        });
+      } catch (e) {
+        print(e.toString());
+      }
 
-    try {
-      _firestore.collection('users').doc(user.uid).update({
-        'posts': FieldValue.arrayUnion([postId])
-      });
-    } catch (e) {
-      print(e.toString());
+      try {
+        _firestore.collection('users').doc(user.uid).update({
+          'posts': FieldValue.arrayUnion([postId])
+        });
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final userModel = userProvider.userModel;
+
     final fileName =
         pickedFile != null ? basename(pickedFile!.name) : 'No File Selected';
     return Scaffold(
@@ -104,57 +149,156 @@ class _AddPostState extends State<AddPost> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (pickedFile == null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Image(
-                image: AssetImage('assets/upload_image.gif'),
-              ),
-            ),
-          if (pickedFile != null)
-            SizedBox(
-              height: 300,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.file(
-                  File(
-                    pickedFile!.path!,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              if (pickedFile == null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Image(
+                    image: AssetImage('assets/upload_image.gif'),
+                  ),
+                ),
+              if (pickedFile != null)
+                SizedBox(
+                  height: 300,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.file(
+                      File(
+                        pickedFile!.path!,
+                      ),
+                    ),
+                  ),
+                ),
+              if (pickedFile == null)
+                GestureDetector(
+                  onTap: selectFile,
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Icon(
+                          Boxicons.bxs_hand,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xFFbd91d4),
+                    ),
+                  ),
+                ),
+              // ButtonWidget(
+              //   text: '',
+              //   icon: Boxicons.bxs_hand,
+              //   onClicked: selectFile,
+              // ),
+              if (pickedFile != null)
+                ButtonWidget(
+                  text: 'Replace File',
+                  icon: Icons.attach_file,
+                  onClicked: selectFile,
+                ),
+              const SizedBox(height: 8),
+              Container(
+                margin: EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 185, 184, 184),
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                    ),
+                  ],
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8.0,
+                    horizontal: 12.0,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Color(0xFFfcf4e4),
+                            ),
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.location_on,
+                                size: 16,
+                              ),
+                              color: Color(0xFF756d54),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(c + ", " + p),
+                                Text('location'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      Icon(Icons.chevron_right_sharp),
+                    ],
                   ),
                 ),
               ),
-            ),
-          if (pickedFile == null)
-            ButtonWidget(
-              text: 'Select File',
-              icon: Icons.attach_file,
-              onClicked: selectFile,
-            ),
-          if (pickedFile != null)
-            ButtonWidget(
-              text: 'Replace File',
-              icon: Icons.attach_file,
-              onClicked: selectFile,
-            ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _descController,
-            decoration: InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 8.0,
+                  horizontal: 12.0,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(255, 185, 184, 184),
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _descController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'Say something about this place',
+                  ),
+                ),
               ),
-              hintText: 'Say something about the place',
-            ),
+              const SizedBox(height: 18),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFbd91d4),
+                ),
+                onPressed: () {
+                  uploadFile();
+                },
+                child: Text('upload'),
+              ),
+            ],
           ),
-          const SizedBox(height: 18),
-          ElevatedButton(
-            onPressed: () {
-              uploadFile();
-            },
-            child: Text('upload'),
-          ),
-        ],
+        ),
       ),
     );
   }

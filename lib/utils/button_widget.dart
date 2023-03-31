@@ -32,6 +32,7 @@ class ButtonWidget extends StatelessWidget {
               ),
             ],
           ),
+          style: ElevatedButton.styleFrom(backgroundColor: Color(0xFFbd91d4)),
           onPressed: onClicked,
         ),
       );
