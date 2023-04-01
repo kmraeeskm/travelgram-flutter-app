@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:travelgram/auth/auth_methods.dart';
+import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
 
@@ -345,7 +347,42 @@ class PostBox extends StatelessWidget {
                       ),
                     ],
                   ),
-                  Icon(Boxicons.bx_bookmark),
+                  StreamBuilder<DocumentSnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(user.uid)
+                          .snapshots(),
+                      builder: (context, snapshot) {
+                        bool containsPostId = false;
+                        if (!snapshot.hasData) {
+                          return Container();
+                        }
+                        final data =
+                            snapshot.data!.data() as Map<String, dynamic>;
+                        final bookmarksExists =
+                            data != null && data.containsKey('bookmarks');
+
+                        // Do something with the bookmarks list
+                        if (bookmarksExists) {
+                          containsPostId =
+                              data['bookmarks'].contains(pid) ? true : false;
+                          return IconButton(
+                            onPressed: () {
+                              fireStoreMethods()
+                                  .bookmark(pid, data['bookmarks']);
+                            },
+                            icon: Icon(Boxicons.bx_bookmark,
+                                color:
+                                    containsPostId ? Colors.red : Colors.black),
+                          );
+                        }
+                        return IconButton(
+                          onPressed: () {
+                            fireStoreMethods().bookmark(pid, []);
+                          },
+                          icon: Icon(Boxicons.bx_bookmark, color: Colors.black),
+                        );
+                      }),
                 ],
               ),
             ],

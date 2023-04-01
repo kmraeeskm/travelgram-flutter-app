@@ -1,13 +1,14 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:travelgram/auth/storage_methods.dart';
 import 'package:travelgram/models/posts.dart';
 import 'package:uuid/uuid.dart';
 
 class fireStoreMethods {
   final FirebaseFirestore _firebasefirestore = FirebaseFirestore.instance;
+  final user = FirebaseAuth.instance.currentUser!;
 
   Future<String> uploadPost(
     String discription,
@@ -38,6 +39,33 @@ class fireStoreMethods {
       res = error.toString();
     }
     return res;
+  }
+
+  Future<void> bookmark(String pId, List books) async {
+    print(books);
+    try {
+      if (!books.contains(pId) || books.isEmpty) {
+        print("adding");
+        try {
+          await _firebasefirestore.collection('users').doc(user.uid).update({
+            'bookmarks': FieldValue.arrayUnion([pId])
+          });
+        } catch (e) {
+          print(e.toString());
+        }
+      } else {
+        print("removing");
+        try {
+          await _firebasefirestore.collection('users').doc(user.uid).update({
+            'bookmarks': FieldValue.arrayRemove([pId])
+          });
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Future<void> likepost(String postid, String uid, List likes) async {

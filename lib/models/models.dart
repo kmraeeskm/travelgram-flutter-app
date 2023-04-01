@@ -7,6 +7,7 @@ class UserModel {
   final String username;
   final String photourl;
   final String type;
+
   const UserModel({
     required this.mail,
     required this.uid,
