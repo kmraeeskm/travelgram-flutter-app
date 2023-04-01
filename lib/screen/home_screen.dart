@@ -10,6 +10,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/user_provider.dart';
+import 'package:travelgram/screen/comment_modal_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
@@ -278,7 +279,70 @@ class PostBox extends StatelessWidget {
                       SizedBox(
                         width: 16,
                       ),
-                      Icon(Boxicons.bx_comment),
+                      StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('comments')
+                            .doc(pid)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<
+                                    DocumentSnapshot<Map<String, dynamic>>>
+                                snapshot) {
+                          if (snapshot.hasData) {
+                            final comments = snapshot.data!.data();
+                            if (comments != null &&
+                                comments.containsKey('comments')) {
+                              final commentsList =
+                                  comments['comments'] as List<dynamic>;
+                              final numComments = commentsList.length;
+                              return Column(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10)),
+                                          context: context,
+                                          builder: (context) {
+                                            return CommentModalSheet(
+                                              postID: pid,
+                                              name: name,
+                                            );
+                                          });
+                                    },
+                                    icon: Icon(Boxicons.bx_comment),
+                                  ),
+                                  Text(numComments.toString()),
+                                ],
+                              );
+                            }
+                          }
+                          // Return a default value if the document does not exist
+                          return Column(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  print("what");
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      context: context,
+                                      builder: (context) {
+                                        return CommentModalSheet(
+                                          postID: pid,
+                                          name: name,
+                                        );
+                                      });
+                                },
+                                icon: Icon(Boxicons.bx_comment),
+                              ),
+                              Text('0'),
+                            ],
+                          );
+                        },
+                      ),
                     ],
                   ),
                   Icon(Boxicons.bx_bookmark),
