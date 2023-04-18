@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future getpostIDsOfUser() async {
     await _firestore.collection('users').doc(user.uid).get().then((doc) {
-      postIDsOfUser = doc.data()!['posts'];
+      postIDsOfUser = doc.data()!['hotels'];
     });
   }
 

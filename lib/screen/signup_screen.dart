@@ -140,8 +140,7 @@ class _signupscreenState extends State<signupscreen> {
                 // ),
 
                 DropdownButton(
-                  hint: Text(
-                      'Please choose a location'), // Not necessary for Option 1
+                  hint: Text('Please choose a location'),
                   value: _selectedUserType,
                   onChanged: (newValue) {
                     setState(() {

@@ -103,7 +103,10 @@ class _ExploreState extends State<Explore> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(
+              vertical: 8.0,
+              horizontal: 16,
+            ),
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.05,
               child: CupertinoSearchTextField(
@@ -118,59 +121,65 @@ class _ExploreState extends State<Explore> {
             ),
           ),
           Expanded(
-            child: MasonryGridView.builder(
-              itemCount: _posts.length,
-              gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16,
               ),
-              itemBuilder: (context, index) {
-                if (searchText == '' ||
-                    _posts[index]
-                        .location
-                        .toLowerCase()
-                        .contains(searchText.toLowerCase())) {
-                  return Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(
-                            _posts[index].imageurl,
-                          ),
-                        ),
-                        Positioned(
-                          top: 5,
-                          left: 5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10),
+              child: MasonryGridView.builder(
+                itemCount: _posts.length,
+                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                ),
+                itemBuilder: (context, index) {
+                  if (searchText == '' ||
+                      _posts[index]
+                          .location
+                          .toLowerCase()
+                          .contains(searchText.toLowerCase())) {
+                    return Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              _posts[index].imageurl,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 10,
-                                    backgroundImage:
-                                        NetworkImage(_posts[index].dpurl),
-                                  ),
-                                  Text(
-                                    _posts[index].location,
-                                    style: TextStyle(fontSize: 10),
-                                  )
-                                ],
+                          ),
+                          Positioned(
+                            top: 5,
+                            left: 5,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 10,
+                                      backgroundImage:
+                                          NetworkImage(_posts[index].dpurl),
+                                    ),
+                                    Text(
+                                      _posts[index].location,
+                                      style: TextStyle(fontSize: 10),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-                return Container();
-              },
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                },
+              ),
             ),
           ),
           // Expanded(

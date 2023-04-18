@@ -80,39 +80,76 @@ class _AddPostState extends State<AddPost> {
     var data = snap.data();
     if (data != null) {
       Map<String, dynamic> snapd = data as Map<String, dynamic>;
-      // rest of your code
-      final file = File(pickedFile!.path!);
-      final destination = 'posts/${pickedFile!.name}';
+      if (snapd['type'] == 'normaluser') {
+        final file = File(pickedFile!.path!);
+        final destination = 'posts/${pickedFile!.name}';
 
-      task = FirebaseApi.uploadFile(destination, file);
-      setState(() {});
+        task = FirebaseApi.uploadFile(destination, file);
+        setState(() {});
 
-      final snapshot = await task!.whenComplete(() {});
-      final urlDownload = await snapshot.ref.getDownloadURL();
+        final snapshot = await task!.whenComplete(() {});
+        final urlDownload = await snapshot.ref.getDownloadURL();
 
-      String postId = const Uuid().v1();
-      try {
-        _firestore.collection('posts').doc(postId).set({
-          'postId': postId,
-          'uId': user.uid,
-          'imageUrl': urlDownload,
-          'location': '$c,$p',
-          'time': DateTime.now(),
-          'description': _descController.text,
-          'name': snapd['username'],
-          'proPic': snapd['photourl'],
-          'likes': [],
-        });
-      } catch (e) {
-        print(e.toString());
-      }
+        String postId = const Uuid().v1();
+        try {
+          _firestore.collection('posts').doc(postId).set({
+            'postId': postId,
+            'uId': user.uid,
+            'imageUrl': urlDownload,
+            'location': '$c,$p',
+            'time': DateTime.now(),
+            'description': _descController.text,
+            'name': snapd['username'],
+            'proPic': snapd['photourl'],
+            'likes': [],
+          });
+        } catch (e) {
+          print(e.toString());
+        }
 
-      try {
-        _firestore.collection('users').doc(user.uid).update({
-          'posts': FieldValue.arrayUnion([postId])
-        });
-      } catch (e) {
-        print(e.toString());
+        try {
+          _firestore.collection('users').doc(user.uid).update({
+            'posts': FieldValue.arrayUnion([postId])
+          });
+        } catch (e) {
+          print(e.toString());
+        }
+      } else {
+        if (snapd['type'] == 'hotel') {
+          final file = File(pickedFile!.path!);
+          final destination = 'hotels/${pickedFile!.name}';
+
+          task = FirebaseApi.uploadFile(destination, file);
+          setState(() {});
+
+          final snapshot = await task!.whenComplete(() {});
+          final urlDownload = await snapshot.ref.getDownloadURL();
+
+          String postId = const Uuid().v1();
+          try {
+            _firestore.collection('hotels').doc(postId).set({
+              'postId': postId,
+              'uId': user.uid,
+              'imageUrl': urlDownload,
+              'location': '$c,$p',
+              'time': DateTime.now(),
+              'description': _descController.text,
+              'name': snapd['username'],
+              'proPic': snapd['photourl'],
+              'likes': [],
+            });
+          } catch (e) {
+            print(e.toString());
+          }
+
+          try {
+            _firestore.collection('users').doc(user.uid).update({
+              'hotels': FieldValue.arrayUnion([postId])
+            });
+          } catch (e) {
+            print(e.toString());
+          }
+        }
       }
     }
   }

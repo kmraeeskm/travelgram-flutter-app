@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:travelgram/screen/explore.dart';
 import 'package:travelgram/screen/home_screen.dart';
+import 'package:travelgram/screen/hotel_screen.dart';
 import 'package:travelgram/screen/profile.dart';
 
 class IndexPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class Index_PageState extends State<IndexPage> {
     HomeScreen(),
     Explore(),
     AddPost(),
-    ProfilePage(),
+    HotelScreen(),
     ProfilePage(),
   ];
 
@@ -92,7 +93,7 @@ class Index_PageState extends State<IndexPage> {
                   onTap(3);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_message,
+                  iconData: Boxicons.bx_building_house,
                   color: cIndex == 3 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 3 ? Colors.white : Colors.black,
                 ),
@@ -109,6 +110,42 @@ class Index_PageState extends State<IndexPage> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class AppBarIcon extends StatelessWidget {
+  const AppBarIcon({
+    super.key,
+    required this.iconData,
+    required this.color,
+    required this.iconColor,
+  });
+  final IconData iconData;
+  final Color color;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromARGB(255, 236, 236, 236),
+            spreadRadius: 3,
+            blurRadius: 4,
+          )
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(
+          iconData,
+          color: iconColor,
         ),
       ),
     );
