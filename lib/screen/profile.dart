@@ -35,10 +35,18 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future getpostIDsOfUser() async {
-    await _firestore.collection('users').doc(user.uid).get().then((doc) {
-      postIDsOfUser = doc.data()!['hotels'];
-    });
+  Future getpostIDsOfUser(String type) async {
+    print(type);
+    if (type == 'normaluser') {
+      await _firestore.collection('users').doc(user.uid).get().then((doc) {
+        postIDsOfUser = doc.data()!['posts'];
+      });
+    } else {
+      await _firestore.collection('users').doc(user.uid).get().then((doc) {
+        print(doc.data()!['hotels']);
+        postIDsOfUser = doc.data()!['hotels'];
+      });
+    }
   }
 
   Future getPosts(List<dynamic> postIds) async {
@@ -108,10 +116,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(
                     height: 200,
                     width: double.maxFinite,
-                    child: Image(
-                      fit: BoxFit.fill,
-                      image: NetworkImage(
-                          'https://images.pexels.com/photos/2876511/pexels-photo-2876511.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image(
+                        fit: BoxFit.fill,
+                        image: NetworkImage(
+                            'https://images.pexels.com/photos/2876511/pexels-photo-2876511.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+                      ),
                     ),
                   ),
                   Positioned(
@@ -154,7 +165,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         onTap: () {
                           signOutUser();
                         },
-                        child: Text('Account settings'),
+                        child: Chip(label: Text('Settings')),
                       ),
                       Text(
                         userModel.username,
@@ -167,7 +178,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         onTap: () {
                           signOutUser();
                         },
-                        child: Text('Log out'),
+                        child: Chip(label: Text('Log out')),
                       ),
                     ],
                   ),
@@ -178,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               Expanded(
                 child: FutureBuilder(
-                  future: getpostIDsOfUser(),
+                  future: getpostIDsOfUser(userModel.type),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Container();
@@ -189,6 +200,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       );
                     }
                     if (snapshot.connectionState == ConnectionState.done) {
+                      if (userModel.type == "hotel") {
+                        return Center(
+                          child: Text('Reviews coming soon'),
+                        );
+                      }
                       return Column(
                         children: [
                           Expanded(
@@ -220,8 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Map<String, dynamic> data =
                                           documents[index].data()
                                               as Map<String, dynamic>;
-                                      print('data');
-                                      print(data);
+
                                       return Padding(
                                         padding: const EdgeInsets.all(2.0),
                                         child: ClipRRect(

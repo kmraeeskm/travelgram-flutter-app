@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travelgram/auth/auth_methods.dart';
+import 'package:travelgram/indexPage.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/signup_screen.dart';
 import 'package:travelgram/utils/utils.dart';
@@ -32,8 +33,9 @@ class _loginscreenState extends State<loginscreen> {
       password: _pass.text,
     );
     if (results == 'succes') {
+      // print("object")
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()));
+          MaterialPageRoute(builder: (context) => IndexPage()));
     } else {
       showSnakBar(results, context);
     }
@@ -46,6 +48,7 @@ class _loginscreenState extends State<loginscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFc3dbf4),
       body: SingleChildScrollView(
         child: SafeArea(
           child: Container(
@@ -54,15 +57,18 @@ class _loginscreenState extends State<loginscreen> {
             child: Column(
               children: [
                 const SizedBox(height: 100),
-                Image.asset('assets/Travel-Icon-PNG-Transparent-Image.png',
-                    height: 240),
+                Image.asset('assets/PlaneLoop.gif', height: 240),
                 const SizedBox(height: 60),
                 TextField(
                   controller: _email,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'mail id'),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: _pass,
+                  decoration: InputDecoration(
+                      border: InputBorder.none, hintText: 'password'),
                 ),
                 const SizedBox(height: 16),
                 InkWell(
@@ -81,7 +87,9 @@ class _loginscreenState extends State<loginscreen> {
                     ),
                     child: _isloading
                         ? const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
                           )
                         : const Text('Log in'),
                   ),
@@ -92,7 +100,7 @@ class _loginscreenState extends State<loginscreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: const Text('Dont have an accound?  '),
+                      child: const Text('Dont have an account?  '),
                     ),
                     GestureDetector(
                       onTap: navigatetosingnup,

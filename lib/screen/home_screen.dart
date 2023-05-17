@@ -13,6 +13,7 @@ import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
+import 'package:travelgram/utils/show_more.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key});
@@ -222,10 +223,6 @@ class PostBox extends StatelessWidget {
               SizedBox(
                 height: 16,
               ),
-              Text(bio),
-              SizedBox(
-                height: 16,
-              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -384,6 +381,13 @@ class PostBox extends StatelessWidget {
                         );
                       }),
                 ],
+              ),
+              SizedBox(
+                height: 16,
+              ),
+              ExpandableShowMoreWidget(
+                text: bio,
+                height: 80,
               ),
             ],
           ),

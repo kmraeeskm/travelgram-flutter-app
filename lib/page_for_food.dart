@@ -1,30 +1,23 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
 
-import 'package:boxicons/boxicons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:travelgram/screen/add_post.dart';
-import 'package:travelgram/screen/explore.dart';
-import 'package:travelgram/screen/home_screen.dart';
-import 'package:travelgram/screen/hotel_screen.dart';
+import 'package:travelgram/screen/food/AddFood.dart';
 import 'package:travelgram/screen/profile.dart';
+import 'screen/food/foods.dart';
 
-class IndexPage extends StatefulWidget {
-  const IndexPage({super.key});
+class IndexPageFood extends StatefulWidget {
+  const IndexPageFood({super.key});
 
   @override
-  State<IndexPage> createState() => Index_PageState();
+  State<IndexPageFood> createState() => Index_PageState();
 }
 
-class Index_PageState extends State<IndexPage> {
+class Index_PageState extends State<IndexPageFood> {
   int cIndex = 0;
   List pages = [
-    HomeScreen(),
-    Explore(),
-    AddPost(),
-    HotelScreen(),
+    Foods(),
+    AddFood(),
     ProfilePage(),
   ];
 
@@ -41,7 +34,7 @@ class Index_PageState extends State<IndexPage> {
       body: pages[cIndex],
       bottomNavigationBar: Padding(
         padding: EdgeInsets.symmetric(
-            vertical: 8.0, horizontal: MediaQuery.of(context).size.width * 0.1),
+            vertical: 8.0, horizontal: MediaQuery.of(context).size.width * 0.2),
         child: Container(
           margin: const EdgeInsets.only(bottom: 10.0),
           padding: const EdgeInsets.all(8.0),
@@ -56,14 +49,14 @@ class Index_PageState extends State<IndexPage> {
                 )
               ]),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               GestureDetector(
                 onTap: () {
                   onTap(0);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_home,
+                  iconData: CupertinoIcons.ticket,
                   color: cIndex == 0 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 0 ? Colors.white : Colors.black,
                 ),
@@ -73,7 +66,7 @@ class Index_PageState extends State<IndexPage> {
                   onTap(1);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_compass,
+                  iconData: CupertinoIcons.add,
                   color: cIndex == 1 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 1 ? Colors.white : Colors.black,
                 ),
@@ -83,29 +76,9 @@ class Index_PageState extends State<IndexPage> {
                   onTap(2);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.add,
+                  iconData: CupertinoIcons.profile_circled,
                   color: cIndex == 2 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 2 ? Colors.white : Colors.black,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  onTap(3);
-                },
-                child: AppBarIcon(
-                  iconData: Boxicons.bx_building_house,
-                  color: cIndex == 3 ? Color(0xFFbd91d4) : Colors.white,
-                  iconColor: cIndex == 3 ? Colors.white : Colors.black,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  onTap(4);
-                },
-                child: AppBarIcon(
-                  iconData: CupertinoIcons.person,
-                  color: cIndex == 4 ? Color(0xFFbd91d4) : Colors.white,
-                  iconColor: cIndex == 4 ? Colors.white : Colors.black,
                 ),
               ),
             ],

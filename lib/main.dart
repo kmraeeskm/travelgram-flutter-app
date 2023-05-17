@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:travelgram/auth/user_provider.dart';
-import 'package:travelgram/page.dart';
+import 'package:travelgram/indexPage.dart';
+import 'package:travelgram/page_for_user.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/login_screen.dart';
 import 'package:travelgram/auth/auth_methods.dart';
@@ -66,6 +67,7 @@ class UserAuth extends StatelessWidget {
           });
           return CircularProgressIndicator();
         }
+
         return IndexPage();
       });
     } else {

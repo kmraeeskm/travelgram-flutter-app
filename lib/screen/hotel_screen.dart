@@ -13,6 +13,8 @@ import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
+import 'package:travelgram/screen/hotel/hotel_details.dart';
+import 'package:travelgram/utils/show_more.dart';
 
 class HotelScreen extends StatefulWidget {
   const HotelScreen({Key? key});
@@ -91,15 +93,27 @@ class _HotelScreenState extends State<HotelScreen> {
                     cacheExtent: 30,
                     itemCount: snapshot.data!.docs.length,
                     itemBuilder: (context, index) {
+                      print(snapshot.data!.docs[index].data());
                       var post = snapshot.data!.docs[index];
 
-                      return PostBox(
-                        pid: post['postId'],
-                        dpurl: post['proPic'],
-                        bio: post['description'],
-                        imageurl: post['imageUrl'],
-                        location: post['location'],
-                        name: post['name'],
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => HotelDetails(
+                                snap: post,
+                              ),
+                            ),
+                          );
+                        },
+                        child: PostBox(
+                          pid: post['postId'],
+                          dpurl: post['imageUrl'],
+                          bio: post['description'],
+                          imageurl: post['imageUrl'],
+                          location: post['location'],
+                          name: post['name'],
+                        ),
                       );
                     },
                   );
@@ -246,13 +260,14 @@ class PostBox extends StatelessWidget {
                   ],
                 ),
                 SizedBox(
-                  height: 16,
+                  height: 12,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       height: width * 0.7,
+                      width: width * 0.7,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: FadeInImage.memoryNetwork(
@@ -264,12 +279,9 @@ class PostBox extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  height: 16,
-                ),
-                Text(bio),
-                SizedBox(
-                  height: 16,
+                ExpandableShowMoreWidget(
+                  text: bio,
+                  height: 50,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

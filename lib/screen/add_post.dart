@@ -161,6 +161,7 @@ class _AddPostState extends State<AddPost> {
 
     final fileName =
         pickedFile != null ? basename(pickedFile!.name) : 'No File Selected';
+    if (pickedFile != null) print(pickedFile!.path!);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -287,7 +288,7 @@ class _AddPostState extends State<AddPost> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(c + ", " + p),
+                                Text("$c, $p"),
                                 Text('location'),
                               ],
                             ),

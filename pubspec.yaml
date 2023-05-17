@@ -31,9 +31,12 @@ dependencies:
   animated_sidebar: ^0.0.1
   animated_text_kit: ^4.2.2
   boxicons: ^2.1.3
+  calendar_date_picker2: ^0.5.2
   carousel_slider: ^4.2.1
+  circular_seek_bar: ^1.1.0+2
   cloud_firestore: ^4.4.3
   cupertino_icons: ^1.0.2
+  custom_date_range_picker: ^1.0.10
   file_picker: ^5.2.6
   firebase_auth: ^4.2.10
   firebase_core: ^2.7.1
@@ -47,11 +50,15 @@ dependencies:
   geolocator: ^9.0.2
   get: ^4.6.5
   google_fonts: ^4.0.3
+  google_maps_flutter: ^2.2.5
   image_picker: ^0.8.6+4
-  intl: ^0.17.0
+  intl: ^0.18.0
   loading_animation_widget: ^1.2.0+4
+  msh_checkbox: ^2.0.1
   permission_handler: ^10.2.0
   provider: ^6.0.5
+  stepper_counter_swipe: ^1.0.2
+  syncfusion_flutter_datepicker: ^21.1.41
   transparent_image: ^2.0.1
   unicons: ^2.1.1
   uuid: ^3.0.7
