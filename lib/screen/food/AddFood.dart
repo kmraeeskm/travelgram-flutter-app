@@ -23,7 +23,29 @@ class AddFood extends StatefulWidget {
 class _AddFoodState extends State<AddFood> {
   String c = '';
   String p = '';
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _foodController = TextEditingController();
+  final TextEditingController _hotelNameController = TextEditingController();
   String lalo = '';
+
+  void showProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Uploading Data'),
+          content: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
+  }
+
+  void hideProgressDialog(VoidCallback hideCallback) {
+    hideCallback();
+  }
 
   @override
   void initState() {
@@ -64,28 +86,33 @@ class _AddFoodState extends State<AddFood> {
       lalo = '${position.latitude} ${position.longitude}';
       c = city;
       p = administrativeArea;
+      _locationController.text = '$c, $p';
     });
   }
 
-  Future uploadHostel() async {
+  Future uploadHostel(VoidCallback hideCallback) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     final fileMain = File(pickedFile!.path!);
     String postId = const Uuid().v1();
-    final destination = 'hotels/$postId';
+    final destination = 'foods/$postId';
 
     task = FirebaseApi.uploadFile(destination, fileMain);
     setState(() {});
 
     final snapshot = await task!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
+    String location =
+        _locationController.text.replaceAll(',', '').trim().toLowerCase();
 
     try {
       _firestore.collection('foods').doc(postId).set({
         'postId': postId,
         'uId': user.uid,
         'imageUrl': urlDownload,
-        'location': '$c,$p',
+        'location': location,
+        'food': _foodController.text,
+        'hotel': _hotelNameController.text,
         'time': DateTime.now(),
         'rating': 0,
         'ratingCount': 0,
@@ -96,11 +123,13 @@ class _AddFoodState extends State<AddFood> {
 
     try {
       _firestore.collection('users').doc(user.uid).update({
-        'hotels': FieldValue.arrayUnion([postId])
+        'foods': FieldValue.arrayUnion([postId])
       });
     } catch (e) {
       print(e.toString());
     }
+
+    hideProgressDialog(hideCallback);
   }
 
   @override
@@ -167,6 +196,7 @@ class _AddFoodState extends State<AddFood> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: TextField(
+                        controller: _foodController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Food Name',
@@ -206,6 +236,7 @@ class _AddFoodState extends State<AddFood> {
                               height: 30,
                             ),
                             TextField(
+                              controller: _hotelNameController,
                               textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
@@ -215,59 +246,59 @@ class _AddFoodState extends State<AddFood> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: height * 0.025),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black,
-                                  ),
-                                  width: width * 0.1,
-                                  height: height * 0.1,
-                                  child: Center(
-                                    child: Text(
-                                      'S',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black,
-                                  ),
-                                  width: width * 0.1,
-                                  height: height * 0.1,
-                                  child: Center(
-                                    child: Text(
-                                      'M',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.black,
-                                  ),
-                                  width: width * 0.1,
-                                  height: height * 0.1,
-                                  child: Center(
-                                    child: Text(
-                                      'L',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            //   children: [
+                            //     Container(
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         color: Colors.black,
+                            //       ),
+                            //       width: width * 0.1,
+                            //       height: height * 0.1,
+                            //       child: Center(
+                            //         child: Text(
+                            //           'S',
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     Container(
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         color: Colors.black,
+                            //       ),
+                            //       width: width * 0.1,
+                            //       height: height * 0.1,
+                            //       child: Center(
+                            //         child: Text(
+                            //           'M',
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     Container(
+                            //       decoration: BoxDecoration(
+                            //         shape: BoxShape.circle,
+                            //         color: Colors.black,
+                            //       ),
+                            //       width: width * 0.1,
+                            //       height: height * 0.1,
+                            //       child: Center(
+                            //         child: Text(
+                            //           'L',
+                            //           style: TextStyle(
+                            //             color: Colors.white,
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                             Container(
                               decoration: BoxDecoration(
                                   shape: BoxShape.rectangle,
@@ -305,7 +336,16 @@ class _AddFoodState extends State<AddFood> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          Text("$c, $p"),
+                                          SizedBox(
+                                            height: 45,
+                                            width: 150,
+                                            child: TextField(
+                                              controller: _locationController,
+                                              decoration: InputDecoration(
+                                                border: InputBorder.none,
+                                              ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -321,8 +361,12 @@ class _AddFoodState extends State<AddFood> {
                               height: width * 0.15,
                               child: GestureDetector(
                                 onTap: () {
-                                  // Navigator.of(context).push(
-                                  //     MaterialPageRoute(builder: (_) => DatePicker()));
+                                  showProgressDialog(context);
+                                  uploadHostel(() {
+                                    hideProgressDialog(() {
+                                      Navigator.of(context).pop();
+                                    });
+                                  });
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(

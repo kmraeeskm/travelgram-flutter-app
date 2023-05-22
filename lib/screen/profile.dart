@@ -42,21 +42,53 @@ class _ProfilePageState extends State<ProfilePage> {
         postIDsOfUser = doc.data()!['posts'];
       });
     } else {
-      await _firestore.collection('users').doc(user.uid).get().then((doc) {
-        print(doc.data()!['hotels']);
-        postIDsOfUser = doc.data()!['hotels'];
-      });
+      if (type == 'hotel') {
+        await _firestore.collection('users').doc(user.uid).get().then((doc) {
+          print(doc.data()!['hotels']);
+          postIDsOfUser = doc.data()!['hotels'];
+        });
+      } else {
+        if (type == 'food') {
+          await _firestore.collection('users').doc(user.uid).get().then((doc) {
+            print(doc.data()!['foods']);
+            postIDsOfUser = doc.data()!['foods'];
+          });
+        }
+      }
     }
   }
 
-  Future getPosts(List<dynamic> postIds) async {
+  Future getPosts(List<dynamic> postIds, String type) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     List<Future<QuerySnapshot>> futures = [];
 
-    for (String id in postIds) {
-      futures.add(
-          _firestore.collection('posts').where('postId', isEqualTo: id).get());
+    if (type == 'normaluser') {
+      for (String id in postIds) {
+        futures.add(_firestore
+            .collection('posts')
+            .where('postId', isEqualTo: id)
+            .get());
+      }
+    } else {
+      if (type == 'hotel') {
+        for (String id in postIds) {
+          futures.add(_firestore
+              .collection('hotels')
+              .where('postId', isEqualTo: id)
+              .get());
+        }
+      } else {
+        if (type == 'food') {
+          for (String id in postIds) {
+            print(id);
+            futures.add(_firestore
+                .collection('foods')
+                .where('postId', isEqualTo: id)
+                .get());
+          }
+        }
+      }
     }
 
     List<QuerySnapshot> snapshots = await Future.wait(futures);
@@ -64,6 +96,7 @@ class _ProfilePageState extends State<ProfilePage> {
     documents = [];
 
     for (QuerySnapshot snapshot in snapshots) {
+      print(snapshot.docs);
       print(snapshot.docs.first);
 
       try {
@@ -209,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         children: [
                           Expanded(
                             child: FutureBuilder(
-                              future: getPosts(postIDsOfUser),
+                              future: getPosts(postIDsOfUser, userModel.type),
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
@@ -236,6 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       Map<String, dynamic> data =
                                           documents[index].data()
                                               as Map<String, dynamic>;
+                                      print(data);
 
                                       return Padding(
                                         padding: const EdgeInsets.all(2.0),

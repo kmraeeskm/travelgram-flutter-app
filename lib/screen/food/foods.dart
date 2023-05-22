@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'review_modal_sheet.dart';
+
 class Foods extends StatefulWidget {
   const Foods({super.key});
 
@@ -62,6 +64,7 @@ class _FoodsState extends State<Foods> {
                       child: Container(
                         width: 180,
                         height: 130,
+                        padding: EdgeInsets.only(top: 20),
                         decoration: BoxDecoration(
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -70,66 +73,106 @@ class _FoodsState extends State<Foods> {
                               Color.fromARGB(255, 222, 221, 228),
                               Color.fromARGB(195, 230, 227, 230)
                             ])),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.grey[200],
-                                    ),
-                                    SizedBox(
-                                      width: 20,
-                                    ),
-                                    Column(
+                        child:
+                            FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                          future: FirebaseFirestore.instance
+                              .collection('foods')
+                              .get(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // While data is being fetched, show a loading indicator
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.data == null) {
+                              // If an error occurs, display an error message
+                              return Text('Add Some Foods');
+                            } else {
+                              // If data fetching is successful, process the documents
+                              final List<
+                                      QueryDocumentSnapshot<
+                                          Map<String, dynamic>>> documents =
+                                  snapshot.data!.docs;
+
+                              return Column(
+                                children: documents.map((doc) {
+                                  final food = doc.get('food') as String;
+                                  final rating = doc.get('rating');
+                                  final image = doc.get('imageUrl') as String;
+                                  final id = doc.get('postId') as String;
+
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
                                       children: [
-                                        SizedBox(
-                                          height: 10,
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 30,
+                                              backgroundImage:
+                                                  NetworkImage(image),
+                                            ),
+                                            SizedBox(
+                                              width: 20,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Text(
+                                                  food,
+                                                  style: TextStyle(
+                                                    fontSize: height * 0.02,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                    onTap: () {
+                                                      showModalBottomSheet(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return ReviewModalSheet(
+                                                              postID: id,
+                                                            );
+                                                          });
+                                                    },
+                                                    child:
+                                                        Text('view reviews')),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                        Text(
-                                          'veggie pizza',
-                                          style: TextStyle(
-                                            fontSize: height * 0.02,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        Row(
+                                          children: [
+                                            Text(rating.toString()),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Icon(
+                                              CupertinoIcons.star_fill,
+                                              color: Color.fromARGB(
+                                                  255, 224, 211, 21),
+                                            ),
+                                          ],
                                         ),
-                                        Text('write a review'),
                                       ],
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Text('4.5'),
-                                    //               Text(
-                                    //   '${snap["rating"].toStringAsFixed(2)} out of 5.0',
-                                    //   style: GoogleFonts.getFont(
-                                    //     'Noto Sans Display',
-                                    //     textStyle: TextStyle(
-                                    //       fontSize: 17,
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Icon(
-                                      CupertinoIcons.star_fill,
-                                      color: Color.fromARGB(255, 224, 211, 21),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                  );
+                                }).toList(),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
