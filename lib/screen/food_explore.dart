@@ -7,37 +7,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:travelgram/screen/home_screen.dart';
 
-class Post {
-  final String name;
+class Food {
+  final String food;
+  final String hotel;
+  final String imageUrl;
   final String location;
-  final String imageurl;
-  final String bio;
-  final String dpurl;
+  final String rating;
+  final String ratingCount;
 
-  Post({
-    required this.name,
+  Food({
+    required this.food,
+    required this.hotel,
+    required this.imageUrl,
     required this.location,
-    required this.imageurl,
-    required this.bio,
-    required this.dpurl,
+    required this.rating,
+    required this.ratingCount,
   });
 }
 
-class Explore extends StatefulWidget {
-  const Explore({super.key});
+class FoodExplore extends StatefulWidget {
+  const FoodExplore({super.key});
 
   @override
-  State<Explore> createState() => _ExploreState();
+  State<FoodExplore> createState() => _FoodExploreState();
 }
 
-class _ExploreState extends State<Explore> {
-  final List<Post> _posts = [];
+class _FoodExploreState extends State<FoodExplore> {
+  final List<Food> _foods = [];
   String searchText = "";
 
   Future<void> _fetchPosts() async {
     try {
       final postDocs =
-          await FirebaseFirestore.instance.collection('posts').get();
+          await FirebaseFirestore.instance.collection('foods').get();
 
       for (var postDoc in postDocs.docs) {
         final userId = postDoc['uId'];
@@ -46,15 +48,18 @@ class _ExploreState extends State<Explore> {
             .collection('users')
             .doc(userId)
             .get();
-        final userData = userDoc.data() as Map<String, dynamic>;
-        final post = Post(
-          dpurl: userData['photourl'],
-          bio: postDoc['description'],
-          imageurl: postDoc['imageUrl'],
+        final userData = postDoc.data() as Map<String, dynamic>;
+        final rating = postDoc['rating'].toString();
+        final ratingC = postDoc['ratingCount'].toString();
+        final post = Food(
+          food: postDoc['food'],
+          hotel: postDoc['hotel'],
+          imageUrl: postDoc['imageUrl'],
           location: postDoc['location'],
-          name: userData['username'],
+          rating: rating,
+          ratingCount: ratingC,
         );
-        _posts.add(post);
+        _foods.add(post);
       }
 
       setState(() {});
@@ -125,13 +130,13 @@ class _ExploreState extends State<Explore> {
                 horizontal: 16,
               ),
               child: MasonryGridView.builder(
-                itemCount: _posts.length,
+                itemCount: _foods.length,
                 gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                 ),
                 itemBuilder: (context, index) {
                   if (searchText == '' ||
-                      _posts[index]
+                      _foods[index]
                           .location
                           .toLowerCase()
                           .contains(searchText.toLowerCase())) {
@@ -142,7 +147,7 @@ class _ExploreState extends State<Explore> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
-                              _posts[index].imageurl,
+                              _foods[index].imageUrl,
                             ),
                           ),
                           Positioned(
@@ -158,12 +163,12 @@ class _ExploreState extends State<Explore> {
                                 child: Row(
                                   children: [
                                     CircleAvatar(
-                                      radius: 10,
-                                      backgroundImage:
-                                          NetworkImage(_posts[index].dpurl),
-                                    ),
+                                        radius: 10,
+                                        backgroundColor: Colors.green[100]
+                                        // NetworkImage(_foods[index].dpurl),
+                                        ),
                                     Text(
-                                      _posts[index].location,
+                                      _foods[index].location,
                                       style: TextStyle(fontSize: 10),
                                     )
                                   ],

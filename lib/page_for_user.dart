@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:travelgram/screen/explore.dart';
+import 'package:travelgram/screen/food_explore.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/hotel_screen.dart';
 import 'package:travelgram/screen/profile.dart';
@@ -22,8 +23,8 @@ class Index_PageState extends State<IndexPageUser> {
   int cIndex = 0;
   List pages = [
     HomeScreen(),
+    FoodExplore(),
     Explore(),
-    AddPost(),
     HotelScreen(),
     ProfilePage(),
   ];
@@ -75,7 +76,7 @@ class Index_PageState extends State<IndexPageUser> {
                   onTap(1);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_compass,
+                  iconData: Boxicons.bxs_pizza,
                   color: cIndex == 1 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 1 ? Colors.white : Colors.black,
                 ),
@@ -85,7 +86,7 @@ class Index_PageState extends State<IndexPageUser> {
                   onTap(2);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.add,
+                  iconData: Boxicons.bx_compass,
                   color: cIndex == 2 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 2 ? Colors.white : Colors.black,
                 ),

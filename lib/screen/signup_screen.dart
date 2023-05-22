@@ -18,8 +18,8 @@ class signupscreen extends StatefulWidget {
 }
 
 class _signupscreenState extends State<signupscreen> {
-  List<String> type = ['normaluser', 'hotel', 'guide', 'food']; // Option 2
-  String _selectedUserType = 'normaluser'; // Option 2
+  List<String> type = ['traveller', 'hotel', 'guide', 'food']; // Option 2
+  String _selectedUserType = 'traveller'; // Option 2
 
   final TextEditingController _email = TextEditingController();
   final TextEditingController _pass = TextEditingController();
@@ -101,6 +101,9 @@ class _signupscreenState extends State<signupscreen> {
     setState(() {
       _isloading = true;
     });
+    if (_selectedUserType == "traveller") {
+      _selectedUserType = "normaluser";
+    }
     String results = await authmethods().signupuser(
         username: _username.text,
         email: _email.text,
