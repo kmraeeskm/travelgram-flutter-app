@@ -4,13 +4,13 @@ import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/user_provider.dart';
+import 'package:travelgram/screen/food/Food_details.dart';
+import 'package:travelgram/screen/food/edit_food.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/login_screen.dart';
 
@@ -236,6 +236,91 @@ class _ProfilePageState extends State<ProfilePage> {
                       if (userModel.type == "hotel") {
                         return Center(
                           child: Text('Reviews coming soon'),
+                        );
+                      }
+                      if (userModel.type == "food") {
+                        return Column(
+                          children: [
+                            Expanded(
+                              child: FutureBuilder(
+                                future: getPosts(postIDsOfUser, userModel.type),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: LoadingAnimationWidget.waveDots(
+                                          color: Colors.white, size: 40),
+                                    );
+                                  }
+
+                                  if (snapshot.hasError) {
+                                    return Text(snapshot.error.toString());
+                                  }
+
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.done) {}
+
+                                  return MasonryGridView.builder(
+                                      itemCount: documents.length,
+                                      gridDelegate:
+                                          SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        Map<String, dynamic> data =
+                                            documents[index].data()
+                                                as Map<String, dynamic>;
+                                        print(data);
+
+                                        return Padding(
+                                          padding: const EdgeInsets.all(2.0),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                String rating =
+                                                    data['rating'].toString();
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            FoodDetails(
+                                                              imageUrl: data[
+                                                                  'imageUrl'],
+                                                              foodName:
+                                                                  data['food'],
+                                                              hotelName: rating,
+                                                              location: data[
+                                                                  'location'],
+                                                            )));
+                                              },
+                                              onLongPress: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            EditFood(
+                                                              imageUrl: data[
+                                                                  'imageUrl'],
+                                                              foodName:
+                                                                  data['food'],
+                                                              hotelName:
+                                                                  data['hotel'],
+                                                              location: data[
+                                                                  'location'],
+                                                              postId: data[
+                                                                  'postId'],
+                                                            )));
+                                              },
+                                              child: Image.network(
+                                                  data['imageUrl']),
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                },
+                              ),
+                            ),
+                          ],
                         );
                       }
                       return Column(

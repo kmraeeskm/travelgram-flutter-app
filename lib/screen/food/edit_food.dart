@@ -13,14 +13,26 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:uuid/uuid.dart';
 
-class AddFood extends StatefulWidget {
-  const AddFood({super.key});
+class EditFood extends StatefulWidget {
+  const EditFood({
+    super.key,
+    required this.imageUrl,
+    required this.hotelName,
+    required this.foodName,
+    required this.location,
+    required this.postId,
+  });
+  final String imageUrl;
+  final String hotelName;
+  final String foodName;
+  final String location;
+  final String postId;
 
   @override
-  State<AddFood> createState() => _AddFoodState();
+  State<EditFood> createState() => _EditFoodState();
 }
 
-class _AddFoodState extends State<AddFood> {
+class _EditFoodState extends State<EditFood> {
   String c = '';
   String p = '';
   final TextEditingController _locationController = TextEditingController();
@@ -94,8 +106,7 @@ class _AddFoodState extends State<AddFood> {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     final fileMain = File(pickedFile!.path!);
-    String postId = const Uuid().v1();
-    final destination = 'foods/$postId';
+    final destination = 'foods/${widget.postId}';
 
     task = FirebaseApi.uploadFile(destination, fileMain);
     setState(() {});
@@ -105,24 +116,12 @@ class _AddFoodState extends State<AddFood> {
     String location = _locationController.text.trim().toLowerCase();
 
     try {
-      _firestore.collection('foods').doc(postId).set({
-        'postId': postId,
-        'uId': user.uid,
+      _firestore.collection('foods').doc(widget.postId).update({
         'imageUrl': urlDownload,
         'location': location,
         'food': _foodController.text,
         'hotel': _hotelNameController.text,
         'time': DateTime.now(),
-        'rating': 0,
-        'ratingCount': 0,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-
-    try {
-      _firestore.collection('users').doc(user.uid).update({
-        'foods': FieldValue.arrayUnion([postId])
       });
     } catch (e) {
       print(e.toString());
@@ -133,6 +132,9 @@ class _AddFoodState extends State<AddFood> {
 
   @override
   Widget build(BuildContext context) {
+    _locationController.text = widget.location;
+    _hotelNameController.text = widget.hotelName;
+    _foodController.text = widget.foodName;
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -156,18 +158,13 @@ class _AddFoodState extends State<AddFood> {
                         (pickedFile == null)
                             ? GestureDetector(
                                 onTap: selectFile,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: height * 0.3,
-                                      width: width,
-                                      child: Image(
-                                        image:
-                                            AssetImage('assets/add_food.png'),
-                                      ),
-                                    ),
-                                    Text('Add food photo'),
-                                  ],
+                                child: SizedBox(
+                                  height: height * 0.53,
+                                  width: width,
+                                  child: Image.network(
+                                    fit: BoxFit.cover,
+                                    widget.imageUrl,
+                                  ),
                                 ),
                               )
                             : SizedBox(
@@ -376,7 +373,7 @@ class _AddFoodState extends State<AddFood> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Center(
                                       child: Text(
-                                        'Add now',
+                                        'Update',
                                         style: TextStyle(color: Colors.white),
                                       ),
                                     ),
