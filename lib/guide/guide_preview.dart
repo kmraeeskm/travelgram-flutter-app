@@ -12,7 +12,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:travelgram/screen/chat_screen.dart';
+import 'package:travelgram/screen/food/rate.dart';
+import 'package:travelgram/screen/rate.dart';
 import 'package:uuid/uuid.dart';
+
+import '../screen/review_modal_sheet.dart';
 
 class GuidePreivew extends StatefulWidget {
   var snap;
@@ -53,6 +57,19 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
       print("$user1$user2");
       return "$user2$user1";
     }
+  }
+
+  Future<Map<String, dynamic>> fetchRatingData() async {
+    final documentSnapshot = await FirebaseFirestore.instance
+        .collection('comments')
+        .doc(widget.snap.uId)
+        .collection(widget.snap.postId)
+        .doc('rating')
+        .get();
+
+    final ratingData = documentSnapshot.data();
+
+    return ratingData as Map<String, dynamic>;
   }
 
   @override
@@ -137,6 +154,50 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                       //     fontSize: height * 0.03,
                       //   ),
                       // ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  right: 15,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => RatingGuide(
+                                guideId: widget.snap.uId,
+                                postId: widget.snap.postId,
+                              )));
+                    },
+                    child: SizedBox(
+                      width: 120,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Color.fromARGB(48, 255, 255, 255),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 45,
+                              width: 150,
+                              child: Text('write a review'),
+                            ),
+                          ],
+                        ),
+                        // TextField(
+                        //   controller: _foodController,
+                        //   decoration: InputDecoration(
+                        //     border: InputBorder.none,
+                        //     hintText: 'Food Name',
+                        //   ),
+                        //   style: TextStyle(
+                        //     color: Colors.black,
+                        //     fontWeight: FontWeight.bold,
+                        //     fontSize: height * 0.03,
+                        //   ),
+                        // ),
+                      ),
                     ),
                   ),
                 ),
@@ -311,7 +372,21 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                             color: Color(0xFFfcf4e4),
                                           ),
                                           child: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              showModalBottomSheet(
+                                                  shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return ReviewModalSheet(
+                                                      postID:
+                                                          widget.snap.postId,
+                                                      uId: widget.snap.uId,
+                                                    );
+                                                  });
+                                            },
                                             icon: Icon(
                                               Icons.stars,
                                               color: Colors.yellow,
@@ -330,13 +405,32 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                             SizedBox(
                                               height: 45,
                                               width: 50,
-                                              child: TextField(
-                                                enabled: false,
-                                                controller: _ratingController,
-                                                decoration: InputDecoration(
-                                                  hintText: 'Hrs',
-                                                  border: InputBorder.none,
-                                                ),
+                                              child: FutureBuilder<
+                                                  Map<String, dynamic>>(
+                                                future: fetchRatingData(),
+                                                builder: (BuildContext context,
+                                                    AsyncSnapshot<
+                                                            Map<String,
+                                                                dynamic>>
+                                                        snapshot) {
+                                                  if (snapshot.hasError) {
+                                                    return Text(
+                                                        'Error: ${snapshot.error}');
+                                                  }
+
+                                                  if (snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting) {
+                                                    return CircularProgressIndicator();
+                                                  }
+
+                                                  final ratingData =
+                                                      snapshot.data ?? {};
+
+                                                  return Text(
+                                                      ratingData['rating']
+                                                          .toStringAsFixed(1));
+                                                },
                                               ),
                                             ),
                                           ],
