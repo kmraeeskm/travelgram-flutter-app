@@ -40,11 +40,23 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final player = SoundPlayer();
 
+  Future setData() async {
+    try {
+      await _firestore
+          .collection('chats')
+          .doc(widget.roomID)
+          .update({'members': []});
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   @override
   void initState() {
     recorder.init();
     player.init();
     super.initState();
+    setData();
   }
 
   @override
@@ -83,13 +95,22 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() async {
-    print(widget.roomID + 'aaaaaaaaaaaaaaaaaaaaaa');
+    print(widget.roomID);
     Map<String, dynamic> message = {
       "by": user.uid,
       "message": _message.text,
       "type": 'text',
       "time": DateTime.now(),
     };
+    try {
+      await _firestore
+          .collection('chats')
+          .doc(widget.roomID)
+          .collection('messages')
+          .add(message);
+    } catch (e) {
+      print(e.toString());
+    }
     try {
       await _firestore
           .collection('chats')

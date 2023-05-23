@@ -1,10 +1,11 @@
 // ignore_for_file: prefer_const_constructors, camel_case_types, prefer_const_literals_to_create_immutables
 
 import 'package:boxicons/boxicons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:travelgram/guide/guide_add.dart';
-import 'package:travelgram/guide/guide_chat.dart';
+import 'package:travelgram/guide/guide_homescreen.dart';
 import 'package:travelgram/screen/hotel/bookings.dart';
 import 'package:travelgram/screen/hotel/dashboard.dart';
 import 'package:travelgram/screen/profile.dart';
@@ -21,7 +22,7 @@ class IndexPageGuide extends StatefulWidget {
 class Index_PageState extends State<IndexPageGuide> {
   int cIndex = 0;
   List pages = [
-    GuideHomeScreen(),
+    GuideHomeScreen(currentUserId: FirebaseAuth.instance.currentUser!.uid),
     // Bookings(),
     AddGuidePlace(),
     // MyHotels(),
