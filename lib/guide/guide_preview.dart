@@ -11,6 +11,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:travelgram/screen/add_post.dart';
+import 'package:travelgram/screen/chat_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class GuidePreivew extends StatefulWidget {
@@ -31,6 +32,8 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _ratingController = TextEditingController();
+  final user = FirebaseAuth.instance.currentUser!;
+
   String lalo = '';
 
   @override
@@ -38,6 +41,17 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
     super.initState();
     try {} catch (e) {
       print(e.toString());
+    }
+  }
+
+  String chatRoomID(String user1, String user2) {
+    if (user1[0].toLowerCase().codeUnits[0] >
+        user2[0].toLowerCase().codeUnits[0]) {
+      print("$user1$user2");
+      return "$user1$user2";
+    } else {
+      print("$user1$user2");
+      return "$user2$user1";
     }
   }
 
@@ -401,7 +415,24 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                             width: width * 0.6,
                             height: width * 0.15,
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                String roomID =
+                                    chatRoomID(user.uid, widget.snap.uId);
+
+                                print(user.uid + 'xxxxxxxxxxxxxxxxxxxxxxxxxx');
+                                print(
+                                    widget.snap.uId + 'yyyyyyyyyyyyyyyyyyyyy');
+                                print(roomID + 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzz');
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => ChatScreen(
+                                      //i was hereguideId
+                                      guideId: widget.snap.uId,
+                                      roomID: roomID,
+                                    ),
+                                  ),
+                                );
+                              },
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
