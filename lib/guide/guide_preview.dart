@@ -13,14 +13,15 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:uuid/uuid.dart';
 
-class AddGuidePlace extends StatefulWidget {
-  const AddGuidePlace({super.key});
+class GuidePreivew extends StatefulWidget {
+  var snap;
+  GuidePreivew({super.key, required this.snap});
 
   @override
-  State<AddGuidePlace> createState() => _AddGuidePlaceState();
+  State<GuidePreivew> createState() => _GuidePlacePreivew();
 }
 
-class _AddGuidePlaceState extends State<AddGuidePlace> {
+class _GuidePlacePreivew extends State<GuidePreivew> {
   String c = '';
   String p = '';
   final TextEditingController _locationController = TextEditingController();
@@ -29,115 +30,27 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _ratingController = TextEditingController();
   String lalo = '';
-
-  void showProgressDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Uploading Data'),
-          content: Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
-    );
-  }
-
-  void hideProgressDialog(VoidCallback hideCallback) {
-    hideCallback();
-  }
 
   @override
   void initState() {
     super.initState();
-    try {
-      getUserLocation();
-    } catch (e) {
+    try {} catch (e) {
       print(e.toString());
     }
-  }
-
-  PlatformFile? pickedFile;
-  UploadTask? task;
-  File? file;
-  Future selectFile() async {
-    final result = await FilePicker.platform.pickFiles(allowMultiple: false);
-
-    if (result == null) return;
-    final path = result.files.first;
-
-    setState(() => pickedFile = path);
-  }
-
-  getUserLocation() async {
-    PermissionStatus status = await Permission.locationWhenInUse.status;
-    if (status.isDenied) {
-      status = await Permission.locationWhenInUse.request();
-    }
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    List<Placemark> placemarks = await GeocodingPlatform.instance
-        .placemarkFromCoordinates(position.latitude, position.longitude);
-    Placemark placemark = placemarks[0];
-    print(placemark);
-    String city = '${placemark.locality}';
-    String administrativeArea = '${placemark.administrativeArea}';
-    setState(() {
-      lalo = '${position.latitude} ${position.longitude}';
-      c = city;
-      p = administrativeArea;
-      _locationController.text = '$c, $p';
-    });
-  }
-
-  Future uploadHostel(VoidCallback hideCallback) async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    final user = FirebaseAuth.instance.currentUser!;
-    final fileMain = File(pickedFile!.path!);
-    String postId = const Uuid().v1();
-    final destination = 'foods/$postId';
-
-    task = FirebaseApi.uploadFile(destination, fileMain);
-    setState(() {});
-
-    final snapshot = await task!.whenComplete(() {});
-    final urlDownload = await snapshot.ref.getDownloadURL();
-    String location =
-        _locationController.text.replaceAll(" ", "").trim().toLowerCase();
-
-    try {
-      _firestore.collection('guides').doc(postId).set({
-        'postId': postId,
-        'uId': user.uid,
-        'imageUrl': urlDownload,
-        'location': location,
-        'price': _priceController.text,
-        'duration': _durationController.text,
-        'description': _descriptionController.text,
-        'time': DateTime.now(),
-        'rating': 0,
-        'ratingCount': 0,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-
-    try {
-      _firestore.collection('users').doc(user.uid).update({
-        'guides': FieldValue.arrayUnion([postId])
-      });
-    } catch (e) {
-      print(e.toString());
-    }
-
-    hideProgressDialog(hideCallback);
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(widget.snap.data);
+    _locationController.text = widget.snap.location;
+    _priceController.text = widget.snap.price;
+    _priceController.text = widget.snap.price;
+    _durationController.text = widget.snap.duration;
+    _descriptionController.text = widget.snap.description;
+    _ratingController.text = '${widget.snap.rating} / 5';
+
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -158,33 +71,18 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                     ),
                     child: Column(
                       children: [
-                        (pickedFile == null)
-                            ? GestureDetector(
-                                onTap: selectFile,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: height * 0.3,
-                                      width: width,
-                                      child: Image(
-                                        image:
-                                            AssetImage('assets/add_food.png'),
-                                      ),
-                                    ),
-                                    Text('Add place photo'),
-                                  ],
-                                ),
-                              )
-                            : SizedBox(
-                                height: height * 0.53,
-                                width: width,
-                                child: Image.file(
-                                  fit: BoxFit.cover,
-                                  File(
-                                    pickedFile!.path!,
-                                  ),
-                                ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: height * 0.53,
+                              width: width,
+                              child: Image.network(
+                                widget.snap.imageUrl,
+                                fit: BoxFit.cover,
                               ),
+                            ),
+                          ],
+                        )
                       ],
                     )),
                 Positioned(
@@ -231,7 +129,7 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                 Positioned(
                   top: height * 0.45,
                   child: SizedBox(
-                    height: height * 0.45,
+                    height: height * 0.55,
                     width: width,
                     child: Container(
                       width: 180,
@@ -298,6 +196,7 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                                               height: 45,
                                               width: 50,
                                               child: TextField(
+                                                enabled: false,
                                                 controller: _priceController,
                                                 decoration: InputDecoration(
                                                   hintText: 'Rs',
@@ -353,7 +252,73 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                                               height: 45,
                                               width: 50,
                                               child: TextField(
+                                                enabled: false,
                                                 controller: _durationController,
+                                                decoration: InputDecoration(
+                                                  hintText: 'Hrs',
+                                                  border: InputBorder.none,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromARGB(218, 241, 241, 241)),
+                                width: width * 0.4,
+                                height: height * 0.08,
+                                child: Center(
+                                  child: Row(
+                                    // crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            color: Color(0xFFfcf4e4),
+                                          ),
+                                          child: IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.stars,
+                                              color: Colors.yellow,
+                                              size: 16,
+                                            ),
+                                            color: Color(0xFF756d54),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 45,
+                                              width: 50,
+                                              child: TextField(
+                                                enabled: false,
+                                                controller: _ratingController,
                                                 decoration: InputDecoration(
                                                   hintText: 'Hrs',
                                                   border: InputBorder.none,
@@ -412,6 +377,7 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                                           height: 95,
                                           width: width * 0.7,
                                           child: TextField(
+                                            enabled: false,
                                             maxLines: 3,
                                             controller: _descriptionController,
                                             decoration: InputDecoration(
@@ -435,14 +401,7 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                             width: width * 0.6,
                             height: width * 0.15,
                             child: GestureDetector(
-                              onTap: () {
-                                showProgressDialog(context);
-                                uploadHostel(() {
-                                  hideProgressDialog(() {
-                                    Navigator.of(context).pop();
-                                  });
-                                });
-                              },
+                              onTap: () {},
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(30),
@@ -452,7 +411,7 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Center(
                                     child: Text(
-                                      'Add now',
+                                      'Chat',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                   ),

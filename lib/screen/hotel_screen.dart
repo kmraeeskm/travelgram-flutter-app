@@ -42,7 +42,7 @@ class _HotelScreenState extends State<HotelScreen> {
         ),
         actions: [
           AppBarIcon(
-            iconData: Boxicons.bx_bell,
+            iconData: Boxicons.bx_chat,
             color: Colors.white,
             iconColor: Colors.black,
           ),
@@ -169,6 +169,7 @@ class PostBox extends StatelessWidget {
 
     _showListAlert(BuildContext context) {
       showPlatformDialog(
+        androidBarrierDismissible: true,
         context: context,
         builder: (_) => BasicDialogAlert(
           title: Text("Select action"),
@@ -176,18 +177,19 @@ class PostBox extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                _buildListItem("Get Reccomendations"),
                 _buildListItem("Share"),
                 _buildListItem("Report"),
               ],
             ),
           ),
           actions: <Widget>[
-            BasicDialogAction(
-              title: Text("Cancel"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
+            // BasicDialogAction(
+            //   title: Text("Cancel"),
+            //   onPressed: () {
+            //     Navigator.pop(context);
+            //   },
+            // ),
           ],
         ),
       );

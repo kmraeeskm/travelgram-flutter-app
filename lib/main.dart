@@ -65,7 +65,7 @@ class UserAuth extends StatelessWidget {
           authmeth.getuserdetails().then((userModel) {
             userProvider.setUserModel(userModel);
           });
-          return CircularProgressIndicator();
+          return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
         return IndexPage();

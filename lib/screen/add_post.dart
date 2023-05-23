@@ -172,7 +172,7 @@ class _AddPostState extends State<AddPost> {
         ),
         actions: [
           AppBarIcon(
-            iconData: Boxicons.bx_bell,
+            iconData: Boxicons.bx_chat,
             color: Colors.white,
             iconColor: Colors.black,
           ),

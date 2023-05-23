@@ -135,7 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         actions: [
           AppBarIcon(
-            iconData: Boxicons.bx_bell,
+            iconData: Boxicons.bx_chat,
             color: Colors.white,
             iconColor: Colors.black,
           ),

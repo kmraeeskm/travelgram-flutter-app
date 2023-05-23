@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:travelgram/screen/home_screen.dart';
 
 class Food {
   final String food;
@@ -25,29 +22,32 @@ class Food {
   });
 }
 
-class FoodExplore extends StatefulWidget {
-  const FoodExplore({super.key});
+class FoodReccomendations extends StatefulWidget {
+  final String location;
+  const FoodReccomendations({super.key, required this.location});
 
   @override
-  State<FoodExplore> createState() => _FoodExploreState();
+  State<FoodReccomendations> createState() => _FoodReccomendationsState();
 }
 
-class _FoodExploreState extends State<FoodExplore> {
+class _FoodReccomendationsState extends State<FoodReccomendations> {
   final List<Food> _foods = [];
   String searchText = "";
 
   Future<void> _fetchPosts() async {
     try {
-      final postDocs =
-          await FirebaseFirestore.instance.collection('foods').get();
-
+      String loc = widget.location.toLowerCase();
+      final postDocs = await FirebaseFirestore.instance
+          .collection('foods')
+          .where('location', isEqualTo: loc)
+          .get();
+      print(loc);
+      print(postDocs.docs);
       for (var postDoc in postDocs.docs) {
         final userId = postDoc['uId'];
 
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
+        final userDoc =
+            await FirebaseFirestore.instance.collection('users').get();
         final userData = postDoc.data() as Map<String, dynamic>;
         final rating = postDoc['rating'].toString();
         final ratingC = postDoc['ratingCount'].toString();
@@ -59,6 +59,8 @@ class _FoodExploreState extends State<FoodExplore> {
           rating: rating,
           ratingCount: ratingC,
         );
+        //thiruvananthapuram,kerala
+        //thriuvananthapuram,kerala
         _foods.add(post);
       }
 
@@ -77,52 +79,8 @@ class _FoodExploreState extends State<FoodExplore> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Travelgram',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
-      ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: 8.0,
-              horizontal: 16,
-            ),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
-              child: CupertinoSearchTextField(
-                onChanged: (value) {
-                  setState(() {
-                    searchText = value;
-                  });
-                },
-                borderRadius: BorderRadius.circular(10.0),
-                placeholder: 'Search places',
-              ),
-            ),
-          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(
@@ -185,37 +143,6 @@ class _FoodExploreState extends State<FoodExplore> {
               ),
             ),
           ),
-          // Expanded(
-          //   child: FutureBuilder(
-          //     future: FirebaseFirestore.instance.collection('posts').get(),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.hasData) {
-          //         return MasonryGridView.builder(
-          //             itemCount: snapshot.data!.size,
-          //             gridDelegate:
-          //                 SliverSimpleGridDelegateWithFixedCrossAxisCount(
-          //               crossAxisCount: 3,
-          //             ),
-          //             itemBuilder: (context, index) {
-          //               return Padding(
-          //                 padding: const EdgeInsets.all(2.0),
-          //                 child: ClipRRect(
-          //                   borderRadius: BorderRadius.circular(10),
-          //                   child: Image.network(
-          //                     (snapshot.data! as dynamic).docs[index]
-          //                         ['imageUrl'],
-          //                   ),
-          //                 ),
-          //               );
-          //             });
-          //       } else {
-          //         return Center(
-          //           child: CircularProgressIndicator(),
-          //         );
-          //       }
-          //     },
-          //   ),
-          // ),
         ],
       ),
     );

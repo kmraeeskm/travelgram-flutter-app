@@ -12,18 +12,21 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
+import 'package:travelgram/guide/guide_reccomendations.dart';
+import 'package:travelgram/guide/hotel_reccomendations.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
-import 'package:travelgram/screen/reccomendations_screen.dart';
+import 'package:travelgram/screen/food/food_reccomendations.dart';
 import 'package:travelgram/utils/show_more.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key});
+class ReccomenadtionsScreen extends StatefulWidget {
+  final String postId;
+  const ReccomenadtionsScreen({Key? key, required this.postId});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ReccomenadtionsScreen> createState() => _ReccomenadtionsScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _ReccomenadtionsScreenState extends State<ReccomenadtionsScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
@@ -57,29 +60,32 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: FutureBuilder<QuerySnapshot>(
-        future: FirebaseFirestore.instance.collection('posts').get(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              cacheExtent: 30,
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                var post = snapshot.data!.docs[index];
-
-                return PostBox(
-                  pid: post['postId'],
-                  dpurl: post['proPic'],
-                  bio: post['description'],
-                  imageurl: post['imageUrl'],
-                  location: post['location'],
-                  name: post['name'],
-                );
-              },
-            );
-          }
-          return Container();
-        },
+      body: SingleChildScrollView(
+        child: FutureBuilder<DocumentSnapshot>(
+          future: FirebaseFirestore.instance
+              .collection('posts')
+              .doc(widget.postId)
+              .get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            final post = snapshot.data!.data() as Map<String, dynamic>;
+            if (snapshot.hasData) {
+              return PostBox(
+                pid: post['postId'],
+                dpurl: post['proPic'],
+                bio: post['description'],
+                imageurl: post['imageUrl'],
+                location: post['location'],
+                name: post['name'],
+              );
+            }
+            return Container();
+          },
+        ),
       ),
     );
   }
@@ -109,24 +115,13 @@ class PostBox extends StatelessWidget {
     Widget _buildListItem(String title) {
       return Column(
         children: [
-          GestureDetector(
-            onTap: () {
-              if (title == "Get Reccomendations") {
-                Navigator.of(context).pop();
-                Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => ReccomenadtionsScreen(
-                          postId: pid,
-                        )));
-              }
-            },
-            child: Container(
-              height: 48,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(child: Text(title)),
-                ],
-              ),
+          Container(
+            height: 48,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Expanded(child: Text(title)),
+              ],
             ),
           ),
           const Divider(height: 0.5),
@@ -402,6 +397,47 @@ class PostBox extends StatelessWidget {
               ExpandableShowMoreWidget(
                 text: bio,
                 height: 80,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Foods here',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 200,
+                child: FoodReccomendations(location: location),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Guides here',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 200,
+                child: GuideReccomendations(location: location),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              SizedBox(
+                height: 200,
+                child: HotelReccomendations(location: location),
               ),
             ],
           ),
