@@ -71,7 +71,7 @@ class _signupscreenState extends State<signupscreen> {
       showSnakBar(results, context);
     } else {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()));
+          MaterialPageRoute(builder: (context) => loginscreen()));
     }
   }
 
@@ -93,7 +93,7 @@ class _signupscreenState extends State<signupscreen> {
       showSnakBar(results, context);
     } else {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()));
+          MaterialPageRoute(builder: (context) => loginscreen()));
     }
   }
 
@@ -101,9 +101,29 @@ class _signupscreenState extends State<signupscreen> {
     setState(() {
       _isloading = true;
     });
-    if (_selectedUserType == "traveller") {
-      _selectedUserType = "normaluser";
+    String results = await authmethods().signupuser(
+        username: _username.text,
+        email: _email.text,
+        phone: _phone.text,
+        password: _pass.text,
+        type: "normaluser",
+        file: _image!);
+    setState(() {
+      _isloading = false;
+    });
+    if (results != 'succes') {
+      showSnakBar(results, context);
+    } else {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => loginscreen()));
     }
+  }
+
+  void Signguide() async {
+    setState(() {
+      _isloading = true;
+    });
+
     String results = await authmethods().signupuser(
         username: _username.text,
         email: _email.text,
@@ -118,7 +138,7 @@ class _signupscreenState extends State<signupscreen> {
       showSnakBar(results, context);
     } else {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeScreen()));
+          MaterialPageRoute(builder: (context) => loginscreen()));
     }
   }
 
@@ -251,6 +271,8 @@ class _signupscreenState extends State<signupscreen> {
                         } else {
                           if (_selectedUserType == "food") {
                             Signhotel();
+                          } else {
+                            Signguide();
                           }
                         }
                       },

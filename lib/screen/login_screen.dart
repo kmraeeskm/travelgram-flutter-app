@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/indexPage.dart';
+import 'package:travelgram/main.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/signup_screen.dart';
 import 'package:travelgram/utils/utils.dart';
@@ -34,8 +35,8 @@ class _loginscreenState extends State<loginscreen> {
     );
     if (results == 'succes') {
       // print("object")
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => IndexPage()));
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute(builder: (context) => MyApp()));
     } else {
       showSnakBar(results, context);
     }

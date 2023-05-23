@@ -53,6 +53,11 @@ class _ProfilePageState extends State<ProfilePage> {
             print(doc.data()!['foods']);
             postIDsOfUser = doc.data()!['foods'];
           });
+        } else {
+          await _firestore.collection('users').doc(user.uid).get().then((doc) {
+            print(doc.data()!['guides']);
+            postIDsOfUser = doc.data()!['guides'];
+          });
         }
       }
     }
@@ -84,6 +89,14 @@ class _ProfilePageState extends State<ProfilePage> {
             print(id);
             futures.add(_firestore
                 .collection('foods')
+                .where('postId', isEqualTo: id)
+                .get());
+          }
+        } else {
+          for (String id in postIds) {
+            print(id);
+            futures.add(_firestore
+                .collection('guides')
                 .where('postId', isEqualTo: id)
                 .get());
           }
