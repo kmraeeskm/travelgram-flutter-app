@@ -75,7 +75,6 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
   @override
   Widget build(BuildContext context) {
     // print(widget.snap.data);
-    _locationController.text = widget.snap.location;
     _priceController.text = widget.snap.price;
     _priceController.text = widget.snap.price;
     _durationController.text = widget.snap.duration;
@@ -117,10 +116,9 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                       ],
                     )),
                 Positioned(
-                  top: height * 0.36,
+                  top: height * 0.38,
                   left: 15,
                   child: SizedBox(
-                    width: 200,
                     child: Container(
                       decoration: BoxDecoration(
                         color: Color.fromARGB(48, 255, 255, 255),
@@ -130,14 +128,9 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
-                            height: 45,
-                            width: 150,
-                            child: TextField(
-                              enabled: false,
-                              controller: _locationController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                              ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(widget.snap.location),
                             ),
                           ),
                         ],
@@ -179,9 +172,10 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
-                              height: 45,
-                              width: 150,
-                              child: Text('write a review'),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text('write a review'),
+                              ),
                             ),
                           ],
                         ),
@@ -349,17 +343,33 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.rectangle,
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(218, 241, 241, 241)),
-                                width: width * 0.4,
-                                height: height * 0.08,
-                                child: Center(
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      context: context,
+                                      builder: (context) {
+                                        return ReviewModalSheet(
+                                          postID: widget.snap.postId,
+                                          uId: widget.snap.uId,
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      borderRadius: BorderRadius.circular(20),
+                                      color:
+                                          Color.fromARGB(218, 241, 241, 241)),
+                                  width: width * 0.4,
+                                  height: height * 0.08,
                                   child: Row(
-                                    // crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
@@ -371,28 +381,10 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                                 BorderRadius.circular(20),
                                             color: Color(0xFFfcf4e4),
                                           ),
-                                          child: IconButton(
-                                            onPressed: () {
-                                              showModalBottomSheet(
-                                                  shape: RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return ReviewModalSheet(
-                                                      postID:
-                                                          widget.snap.postId,
-                                                      uId: widget.snap.uId,
-                                                    );
-                                                  });
-                                            },
-                                            icon: Icon(
-                                              Icons.stars,
-                                              color: Colors.yellow,
-                                              size: 16,
-                                            ),
-                                            color: Color(0xFF756d54),
+                                          child: Icon(
+                                            Icons.stars,
+                                            color: Colors.yellow,
+                                            size: 16,
                                           ),
                                         ),
                                       ),

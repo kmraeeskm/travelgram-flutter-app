@@ -14,6 +14,8 @@ import 'package:travelgram/screen/food/edit_food.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/login_screen.dart';
 import 'package:travelgram/screen/reccomendations_screen.dart';
+import 'package:travelgram/screen/review_modal_sheet.dart';
+import 'package:travelgram/screen/review_sheet_profile.dart';
 import 'package:travelgram/screen/view_bookmarks.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -122,6 +124,21 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<String?> fetchPostId() async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('guides')
+        .where('uId', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .limit(1)
+        .get();
+
+    final docs = querySnapshot.docs;
+    if (docs.isNotEmpty) {
+      return docs.first.data()['postId'] as String?;
+    } else {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserProvider>(context);
@@ -191,28 +208,32 @@ class _ProfilePageState extends State<ProfilePage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BookMarksPage(),
-                            ),
-                          );
-                        },
-                        child: Chip(
-                            label: Row(
-                          children: [
-                            // Text(
-                            //   'Bookmarks',
-                            //   style: TextStyle(fontSize: 16),
-                            // ),
-                            Icon(
-                              Boxicons.bx_bookmark_heart,
-                              size: 18,
-                            ),
-                          ],
-                        )),
-                      ),
+                      userModel.type == "hotel"
+                          ? Container()
+                          : userModel.type == "guide"
+                              ? Container()
+                              : GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => BookMarksPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: Chip(
+                                      label: Row(
+                                    children: [
+                                      // Text(
+                                      //   'Bookmarks',
+                                      //   style: TextStyle(fontSize: 16),
+                                      // ),
+                                      Icon(
+                                        Boxicons.bx_bookmark_heart,
+                                        size: 18,
+                                      ),
+                                    ],
+                                  )),
+                                ),
                       Text(
                         userModel.username,
                         style: TextStyle(
@@ -428,6 +449,27 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         );
                       }
+                      if (userModel.type == "guide") {
+                        return FutureBuilder<String?>(
+                          future: fetchPostId(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (!snapshot.hasData ||
+                                snapshot.data == null) {
+                              return Text('Error retrieving postId.');
+                            } else {
+                              return ReviewSheetProfile(
+                                postID: snapshot.data!,
+                                uId: userModel.uid,
+                              );
+                            }
+                          },
+                        );
+                      }
+
                       return Column(
                         children: [
                           Expanded(
