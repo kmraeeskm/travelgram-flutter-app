@@ -106,7 +106,7 @@ class _signupscreenState extends State<signupscreen> {
         email: _email.text,
         phone: _phone.text,
         password: _pass.text,
-        type: "normaluser",
+        type: "traveller",
         file: _image!);
     setState(() {
       _isloading = false;
@@ -250,6 +250,7 @@ class _signupscreenState extends State<signupscreen> {
                     const SizedBox(height: 16),
 
                     TextField(
+                      obscureText: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Password',
@@ -263,7 +264,7 @@ class _signupscreenState extends State<signupscreen> {
 
                     InkWell(
                       onTap: () {
-                        if (_selectedUserType == "normaluser") {
+                        if (_selectedUserType == "traveller") {
                           SignuUser();
                           print("normal user");
                         } else if (_selectedUserType == "hotel") {
@@ -290,7 +291,9 @@ class _signupscreenState extends State<signupscreen> {
                         ),
                         child: _isloading
                             ? const Center(
-                                child: CircularProgressIndicator(),
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
                               )
                             : const Text('Signup'),
                       ),

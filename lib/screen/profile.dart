@@ -37,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future getpostIDsOfUser(String type) async {
     print(type);
-    if (type == 'normaluser') {
+    if (type == 'traveller') {
       await _firestore.collection('users').doc(user.uid).get().then((doc) {
         postIDsOfUser = doc.data()!['posts'];
       });
@@ -68,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     List<Future<QuerySnapshot>> futures = [];
 
-    if (type == 'normaluser') {
+    if (type == 'traveller') {
       for (String id in postIds) {
         futures.add(_firestore
             .collection('posts')
@@ -305,6 +305,11 @@ class _ProfilePageState extends State<ProfilePage> {
                                                               hotelName: rating,
                                                               location: data[
                                                                   'location'],
+                                                              rating: data[
+                                                                  'location'],
+                                                              postId: data[
+                                                                  'postId'],
+                                                              uId: data['uId'],
                                                             )));
                                               },
                                               onLongPress: () {

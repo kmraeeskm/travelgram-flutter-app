@@ -19,7 +19,7 @@ class IndexPage extends StatelessWidget {
     if (userModel!.type == "hotel") {
       return IndexPageHotel();
     } else {
-      if (userModel.type == "normaluser") {
+      if (userModel.type == "traveller") {
         return IndexPageUser();
       } else {
         if (userModel.type == "food") {

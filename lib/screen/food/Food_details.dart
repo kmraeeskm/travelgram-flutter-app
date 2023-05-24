@@ -1,18 +1,28 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:travelgram/screen/rate.dart';
+import 'package:travelgram/screen/review_modal_sheet.dart';
 
 class FoodDetails extends StatefulWidget {
-  const FoodDetails(
-      {super.key,
-      required this.imageUrl,
-      required this.hotelName,
-      required this.foodName,
-      required this.location});
+  const FoodDetails({
+    super.key,
+    required this.imageUrl,
+    required this.hotelName,
+    required this.foodName,
+    required this.location,
+    required this.rating,
+    required this.uId,
+    required this.postId,
+  });
   final String imageUrl;
   final String hotelName;
   final String foodName;
   final String location;
+  final String rating;
+  final String uId;
+  final String postId;
 
   @override
   State<FoodDetails> createState() => _FoodStateDetails();
@@ -30,6 +40,19 @@ class _FoodStateDetails extends State<FoodDetails> {
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<Map<String, dynamic>> fetchRatingData() async {
+    final documentSnapshot = await FirebaseFirestore.instance
+        .collection('comments')
+        .doc(widget.uId)
+        .collection(widget.postId)
+        .doc('rating')
+        .get();
+
+    final ratingData = documentSnapshot.data();
+
+    return ratingData as Map<String, dynamic>;
   }
 
   @override
@@ -81,12 +104,41 @@ class _FoodStateDetails extends State<FoodDetails> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                '${widget.hotelName.toString()} ',
-                                style: TextStyle(fontSize: 20),
+                              FutureBuilder<Map<String, dynamic>>(
+                                future: fetchRatingData(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<Map<String, dynamic>>
+                                        snapshot) {
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  }
+
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return CircularProgressIndicator();
+                                  }
+
+                                  final ratingData = snapshot.data ?? {};
+
+                                  return Text(
+                                      ratingData['rating'].toStringAsFixed(1));
+                                },
                               ),
-                              Icon(
-                                CupertinoIcons.star_fill,
+                              IconButton(
+                                onPressed: () {
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      context: context,
+                                      builder: (context) {
+                                        return ReviewModalSheet(
+                                          postID: widget.postId,
+                                          uId: widget.uId,
+                                        );
+                                      });
+                                },
+                                icon: Icon(CupertinoIcons.star_fill),
                                 color: Color.fromARGB(255, 224, 211, 21),
                               ),
                             ],
@@ -123,6 +175,17 @@ class _FoodStateDetails extends State<FoodDetails> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 widget.foodName,
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                widget.hotelName,
                                 style: TextStyle(
                                     fontSize: 30, fontWeight: FontWeight.bold),
                               ),
@@ -179,6 +242,46 @@ class _FoodStateDetails extends State<FoodDetails> {
                             ),
                             SizedBox(
                               height: 20,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (_) => RatingGuide(
+                                          guideId: widget.uId,
+                                          postId: widget.postId,
+                                        )));
+                              },
+                              child: SizedBox(
+                                width: 120,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Color.fromARGB(48, 255, 255, 255),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 45,
+                                        width: 150,
+                                        child: Text('write a review'),
+                                      ),
+                                    ],
+                                  ),
+                                  // TextField(
+                                  //   controller: _foodController,
+                                  //   decoration: InputDecoration(
+                                  //     border: InputBorder.none,
+                                  //     hintText: 'Food Name',
+                                  //   ),
+                                  //   style: TextStyle(
+                                  //     color: Colors.black,
+                                  //     fontWeight: FontWeight.bold,
+                                  //     fontSize: height * 0.03,
+                                  //   ),
+                                  // ),
+                                ),
+                              ),
                             ),
                           ],
                         ),

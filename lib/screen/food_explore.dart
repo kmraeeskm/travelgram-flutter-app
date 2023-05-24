@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:travelgram/screen/food/Food_details.dart';
 import 'package:travelgram/screen/home_screen.dart';
 
 class Food {
@@ -14,6 +15,8 @@ class Food {
   final String location;
   final String rating;
   final String ratingCount;
+  final String uId;
+  final String postId;
 
   Food({
     required this.food,
@@ -22,6 +25,8 @@ class Food {
     required this.location,
     required this.rating,
     required this.ratingCount,
+    required this.uId,
+    required this.postId,
   });
 }
 
@@ -56,6 +61,8 @@ class _FoodExploreState extends State<FoodExplore> {
           hotel: postDoc['hotel'],
           imageUrl: postDoc['imageUrl'],
           location: postDoc['location'],
+          postId: postDoc['postId'],
+          uId: postDoc['uId'],
           rating: rating,
           ratingCount: ratingC,
         );
@@ -119,7 +126,7 @@ class _FoodExploreState extends State<FoodExplore> {
                   });
                 },
                 borderRadius: BorderRadius.circular(10.0),
-                placeholder: 'Search places',
+                placeholder: 'Search Foods',
               ),
             ),
           ),
@@ -142,41 +149,55 @@ class _FoodExploreState extends State<FoodExplore> {
                           .contains(searchText.toLowerCase())) {
                     return Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              _foods[index].imageUrl,
-                            ),
-                          ),
-                          Positioned(
-                            top: 5,
-                            left: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => FoodDetails(
+                                    foodName: _foods[index].food,
+                                    hotelName: _foods[index].hotel,
+                                    imageUrl: _foods[index].imageUrl,
+                                    location: _foods[index].location,
+                                    rating: _foods[index].rating,
+                                    postId: _foods[index].postId,
+                                    uId: _foods[index].uId,
+                                  )));
+                        },
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                _foods[index].imageUrl,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                        radius: 10,
-                                        backgroundColor: Colors.green[100]
-                                        // NetworkImage(_foods[index].dpurl),
-                                        ),
-                                    Text(
-                                      _foods[index].location,
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ],
+                            ),
+                            Positioned(
+                              top: 5,
+                              left: 5,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                          radius: 10,
+                                          backgroundColor: Colors.green[100]
+                                          // NetworkImage(_foods[index].dpurl),
+                                          ),
+                                      Text(
+                                        _foods[index].location,
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }

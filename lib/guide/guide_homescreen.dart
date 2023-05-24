@@ -64,7 +64,7 @@ class _GuideHomeScreenState extends State<GuideHomeScreen> {
           final chatIds = snapshot.data ?? [];
 
           if (chatIds.isEmpty) {
-            return Text('No chat documents found.');
+            return Center(child: Text('No one has contacted you yet.'));
           }
 
           return ListView.builder(

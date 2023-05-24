@@ -7,12 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:travelgram/screen/home_screen.dart';
 
+import 'reccomendations_screen.dart';
+
 class Post {
   final String name;
   final String location;
   final String imageurl;
   final String bio;
   final String dpurl;
+  final String postId;
 
   Post({
     required this.name,
@@ -20,6 +23,7 @@ class Post {
     required this.imageurl,
     required this.bio,
     required this.dpurl,
+    required this.postId,
   });
 }
 
@@ -48,6 +52,7 @@ class _ExploreState extends State<Explore> {
             .get();
         final userData = userDoc.data() as Map<String, dynamic>;
         final post = Post(
+          postId: postDoc['postId'],
           dpurl: userData['photourl'],
           bio: postDoc['description'],
           imageurl: postDoc['imageUrl'],
@@ -79,24 +84,6 @@ class _ExploreState extends State<Explore> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -137,41 +124,49 @@ class _ExploreState extends State<Explore> {
                           .contains(searchText.toLowerCase())) {
                     return Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              _posts[index].imageurl,
-                            ),
-                          ),
-                          Positioned(
-                            top: 5,
-                            left: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => ReccomenadtionsScreen(
+                                    postId: _posts[index].postId,
+                                  )));
+                        },
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                _posts[index].imageurl,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 10,
-                                      backgroundImage:
-                                          NetworkImage(_posts[index].dpurl),
-                                    ),
-                                    Text(
-                                      _posts[index].location,
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ],
+                            ),
+                            Positioned(
+                              top: 5,
+                              left: 5,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 10,
+                                        backgroundImage:
+                                            NetworkImage(_posts[index].dpurl),
+                                      ),
+                                      Text(
+                                        _posts[index].location,
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }

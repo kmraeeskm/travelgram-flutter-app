@@ -80,7 +80,7 @@ class _AddPostState extends State<AddPost> {
     var data = snap.data();
     if (data != null) {
       Map<String, dynamic> snapd = data as Map<String, dynamic>;
-      if (snapd['type'] == 'normaluser') {
+      if (snapd['type'] == 'traveller') {
         final file = File(pickedFile!.path!);
         final destination = 'posts/${pickedFile!.name}';
 
