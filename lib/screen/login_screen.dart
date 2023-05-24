@@ -35,6 +35,7 @@ class _loginscreenState extends State<loginscreen> {
     );
     if (results == 'succes') {
       // print("object")
+      Navigator.popUntil(context, (route) => route.isFirst);
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute(builder: (context) => MyApp()));
     } else {

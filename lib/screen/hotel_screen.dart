@@ -113,6 +113,7 @@ class _HotelScreenState extends State<HotelScreen> {
                           imageurl: post['imageUrl'],
                           location: post['location'],
                           name: post['name'],
+                          rate: post['rate'],
                         ),
                       );
                     },
@@ -139,17 +140,21 @@ class PostBox extends StatelessWidget {
     required this.dpurl,
     required this.bio,
     required this.pid,
+    required this.rate,
   });
   final String name;
   final String location;
   final String imageurl;
   final String bio;
   final String dpurl;
+  final int rate;
+
   final String pid;
 
   @override
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     Widget _buildListItem(String title) {
       return Column(
         children: [
@@ -264,8 +269,8 @@ class PostBox extends StatelessWidget {
                 SizedBox(
                   height: 12,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Stack(
+                  // mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
                       height: width * 0.7,
@@ -279,6 +284,33 @@ class PostBox extends StatelessWidget {
                         ),
                       ),
                     ),
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(20),
+                            color: Color.fromARGB(218, 241, 241, 241)),
+                        height: height * 0.06,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    child: Text('₹ $rate'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 Text(

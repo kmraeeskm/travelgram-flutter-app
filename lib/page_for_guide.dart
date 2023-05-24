@@ -10,7 +10,6 @@ import 'package:travelgram/screen/hotel/bookings.dart';
 import 'package:travelgram/screen/hotel/dashboard.dart';
 import 'package:travelgram/screen/profile.dart';
 import 'screen/hotel/add_hotel.dart';
-import 'screen/hotel/my_hotels.dart';
 
 class IndexPageGuide extends StatefulWidget {
   const IndexPageGuide({super.key});

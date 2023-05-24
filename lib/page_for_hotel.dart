@@ -3,11 +3,9 @@
 import 'package:boxicons/boxicons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:travelgram/screen/hotel/bookings.dart';
 import 'package:travelgram/screen/hotel/dashboard.dart';
 import 'package:travelgram/screen/profile.dart';
 import 'screen/hotel/add_hotel.dart';
-import 'screen/hotel/my_hotels.dart';
 
 class IndexPageHotel extends StatefulWidget {
   const IndexPageHotel({super.key});
