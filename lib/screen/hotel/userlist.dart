@@ -234,7 +234,9 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                         },
                       )
                     : Center(
-                        child: Text('No one\'s staying now'),
+                        child: widget.c
+                            ? Text('No one\'s staying now')
+                            : Text('No upcoming bookings'),
                       )),
           ),
         );

@@ -18,6 +18,7 @@ class FoodDetails extends StatefulWidget {
     required this.rating,
     required this.uId,
     required this.postId,
+    this.fromFood = false,
   });
   final String imageUrl;
   final String hotelName;
@@ -26,6 +27,7 @@ class FoodDetails extends StatefulWidget {
   final String rating;
   final String uId;
   final String postId;
+  final bool fromFood;
 
   @override
   State<FoodDetails> createState() => _FoodStateDetails();
@@ -438,57 +440,60 @@ class _FoodStateDetails extends State<FoodDetails> {
           ),
         ),
       ),
-      bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 10,
-        ),
-        color: Colors.white,
-        height: 80,
-        child: Row(
-          children: [
-            Container(
-              width: 100,
-              child: StepperSwipe(
-                stepperValue: 1,
-                initialValue: 1,
-                withPlusMinus: true,
-                withFastCount: true,
-                speedTransitionLimitCount: 40,
-                onChanged: (int value) {
-                  foodcount = value;
-                },
-                firstIncrementDuration: Duration(milliseconds: 250),
-                secondIncrementDuration: Duration(microseconds: 1),
-                direction: Axis.horizontal,
-                dragButtonColor: Color(0xFFbd91d4),
-                maxValue: 500,
-                minValue: 0,
+      bottomNavigationBar: Visibility(
+        visible: !widget.fromFood,
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 10,
+          ),
+          color: Colors.white,
+          height: 80,
+          child: Row(
+            children: [
+              Container(
+                width: 100,
+                child: StepperSwipe(
+                  stepperValue: 1,
+                  initialValue: 1,
+                  withPlusMinus: true,
+                  withFastCount: true,
+                  speedTransitionLimitCount: 40,
+                  onChanged: (int value) {
+                    foodcount = value;
+                  },
+                  firstIncrementDuration: Duration(milliseconds: 250),
+                  secondIncrementDuration: Duration(microseconds: 1),
+                  direction: Axis.horizontal,
+                  dragButtonColor: Color(0xFFbd91d4),
+                  maxValue: 500,
+                  minValue: 0,
+                ),
               ),
-            ),
-            Expanded(
-              child: GestureDetector(
-                onTap: () async {
-                  _selectDateTime(context);
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.black,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(
-                      child: Text(
-                        'order now',
-                        style: TextStyle(color: Colors.white),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () async {
+                    _selectDateTime(context);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.black,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Center(
+                        child: Text(
+                          'order now',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -406,6 +406,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                     MaterialPageRoute(
                                                         builder: (_) =>
                                                             FoodDetails(
+                                                              fromFood: true,
                                                               imageUrl: data[
                                                                   'imageUrl'],
                                                               foodName:

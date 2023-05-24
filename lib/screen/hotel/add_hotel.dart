@@ -105,7 +105,12 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     hideCallback();
   }
 
-  Future uploadHostel(VoidCallback hideCallback) async {
+  bool _isloading = false;
+
+  Future uploadHostel() async {
+    setState(() {
+      _isloading = true;
+    });
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     final fileMain = File(pickedFileMain!.path!);
@@ -121,7 +126,7 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     String loc = location.text.replaceAll(" ", "").trim().toLowerCase();
 
     try {
-      _firestore.collection('hotels').doc(postId).set({
+      await _firestore.collection('hotels').doc(postId).set({
         'postId': postId,
         'uId': user.uid,
         'imageUrl': urlDownloadMain,
@@ -145,7 +150,7 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     }
 
     try {
-      _firestore.collection('users').doc(user.uid).update({
+      await _firestore.collection('users').doc(user.uid).update({
         'hotels': FieldValue.arrayUnion([postId])
       });
     } catch (e) {
@@ -164,7 +169,7 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
         final urlDownload = await snapshot.ref.getDownloadURL();
         print(urlDownload);
         try {
-          _firestore.collection('hotels').doc(postId).update({
+          await _firestore.collection('hotels').doc(postId).update({
             'subPics': FieldValue.arrayUnion([urlDownload])
           });
         } catch (e) {
@@ -175,6 +180,9 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     } catch (e) {
       print(e.toString());
     }
+    setState(() {
+      _isloading = false;
+    });
   }
 
   @override
@@ -478,28 +486,24 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
                       Expanded(
                         child: GestureDetector(
                           onTap: () async {
-                            showProgressDialog(context);
-                            await uploadHostel(() {
-                              hideProgressDialog(() {
-                                Navigator.popUntil(
-                                    context, (route) => route.isFirst);
-                              });
-                            });
-                            final materialBanner = MaterialBanner(
+                            await uploadHostel();
+                            final snackBar = SnackBar(
+                              /// need to set following properties for best effect of awesome_snackbar_content
                               elevation: 0,
+                              behavior: SnackBarBehavior.floating,
                               backgroundColor: Colors.transparent,
                               content: AwesomeSnackbarContent(
                                 title: 'Yay',
-                                message: 'Hotel addded successfully.',
+                                message: 'Hotel Added',
+
+                                /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
                                 contentType: ContentType.success,
-                                inMaterialBanner: true,
                               ),
-                              actions: const [SizedBox.shrink()],
                             );
 
                             ScaffoldMessenger.of(context)
-                              ..hideCurrentMaterialBanner()
-                              ..showMaterialBanner(materialBanner);
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(snackBar);
                           },
                           child: Container(
                             decoration: BoxDecoration(
@@ -509,10 +513,16 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Center(
-                                child: Text(
-                                  'Register Hotel',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                                child: _isloading
+                                    ? const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Register Hotel',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                               ),
                             ),
                           ),
