@@ -260,7 +260,82 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (userModel.type == "hotel") {
                         return Center(
-                          child: Text('Reviews coming soon'),
+                          child: SizedBox(
+                            height: 300,
+                            child: FutureBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              future: FirebaseFirestore.instance
+                                  .collection('hotels')
+                                  .where('uId',
+                                      isEqualTo: FirebaseAuth
+                                          .instance.currentUser!.uid)
+                                  .limit(1)
+                                  .get()
+                                  .then((querySnapshot) =>
+                                      querySnapshot.docs.first),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<
+                                          DocumentSnapshot<
+                                              Map<String, dynamic>>>
+                                      snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  // While data is being fetched
+                                  return CircularProgressIndicator();
+                                } else if (snapshot.hasError) {
+                                  // If an error occurred
+                                  return Text('Error: ${snapshot.error}');
+                                } else if (!snapshot.hasData) {
+                                  // If no data is available
+                                  return Text('No data found');
+                                } else {
+                                  final postId =
+                                      snapshot.data!.data()!['postId'];
+
+                                  return StreamBuilder<
+                                      DocumentSnapshot<Map<String, dynamic>>>(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('comments')
+                                        .doc(postId)
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<
+                                                DocumentSnapshot<
+                                                    Map<String, dynamic>>>
+                                            snapshot) {
+                                      if (snapshot.hasData) {
+                                        final comments = snapshot.data!.data();
+                                        if (comments != null &&
+                                            comments.containsKey('comments')) {
+                                          final commentsList =
+                                              comments['comments']
+                                                  as List<dynamic>;
+
+                                          return ListView.builder(
+                                            itemCount: commentsList.length,
+                                            itemBuilder: (context, index) {
+                                              final comment =
+                                                  commentsList[index];
+                                              return ListTile(
+                                                title: Text(comment['text']),
+                                                subtitle: Text(comment['user']),
+                                              );
+                                            },
+                                          );
+                                        }
+                                      }
+                                      // Return an empty ListView if there are no comments
+                                      return ListView.builder(
+                                        itemCount: 1,
+                                        itemBuilder: (context, index) =>
+                                            Center(child: Text('No comments')),
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                          ),
                         );
                       }
                       if (userModel.type == "food") {

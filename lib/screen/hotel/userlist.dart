@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class UserListForAnalysis extends StatefulWidget {
   List<String> ids;
@@ -23,6 +24,19 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
   @override
   void initState() {
     super.initState();
+  }
+
+  String formatDateRange(String startDate, String endDate) {
+    print(startDate);
+    print(endDate);
+    final startDateTime = DateTime.parse(startDate);
+    print(startDateTime);
+    final endDateTime = DateTime.parse(endDate);
+
+    final startFormatted = DateFormat.MMMMd().format(startDateTime);
+    final endFormatted = DateFormat.MMMMd().format(endDateTime);
+
+    return '$startFormatted to $endFormatted';
   }
 
   @override
@@ -80,6 +94,14 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
                                           ConnectionState.done) {
+                                        String dateRange = formatDateRange(
+                                            snap["dates"]
+                                                .toString()
+                                                .split(" ")[0],
+                                            snap["dates"]
+                                                .toString()
+                                                .split(" ")[3]
+                                                .replaceAll("-", ""));
                                         print(snapshot.data!.data());
                                         Map<String, dynamic> eventSnap =
                                             snapshot.data!.data()
@@ -152,7 +174,7 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                                                                   .center,
                                                           children: [
                                                             SizedBox(
-                                                              width: 200,
+                                                              width: 100,
                                                               child: Text(
                                                                 eventSnap[
                                                                     'username'],
@@ -169,7 +191,7 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                                                               ),
                                                             ),
                                                             SizedBox(
-                                                                width: 200,
+                                                                width: 100,
                                                                 child: Text(
                                                                   eventSnap[
                                                                       'email'],
@@ -192,6 +214,9 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                                                           ],
                                                         ),
                                                       ],
+                                                    ),
+                                                    Chip(
+                                                      label: Text(dateRange),
                                                     ),
                                                   ],
                                                 ),
