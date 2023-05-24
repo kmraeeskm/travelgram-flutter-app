@@ -650,6 +650,18 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "qr",
+      "rootUri": "file:///home/denny/.pub-cache/hosted/pub.dev/qr-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "qr_flutter",
+      "rootUri": "file:///home/denny/.pub-cache/hosted/pub.dev/qr_flutter-4.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "recase",
       "rootUri": "file:///home/denny/.pub-cache/hosted/pub.dev/recase-4.1.0",
       "packageUri": "lib/",
@@ -806,7 +818,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2023-05-24T11:51:16.694511Z",
+  "generated": "2023-05-24T21:24:48.407837Z",
   "generator": "pub",
   "generatorVersion": "2.19.3"
 }

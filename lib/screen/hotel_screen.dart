@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
+import 'package:travelgram/screen/bookings_page.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
 import 'package:travelgram/screen/hotel/hotel_details.dart';
 import 'package:travelgram/utils/show_more.dart';
@@ -40,6 +42,22 @@ class _HotelScreenState extends State<HotelScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => BookingsPage()));
+            },
+            child: AppBarIcon(
+              iconData: CupertinoIcons.ticket,
+              color: Colors.white,
+              iconColor: Colors.black,
+            ),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
