@@ -61,9 +61,14 @@ class _UserListForAnalysisState extends State<UserListForAnalysis> {
                 color: Colors.black,
               ),
             ),
-            leading: Icon(
-              Icons.arrow_back,
-              color: Colors.black,
+            leading: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(
+                Icons.arrow_back,
+                color: Colors.black,
+              ),
             ),
           ),
           body: SizedBox(
