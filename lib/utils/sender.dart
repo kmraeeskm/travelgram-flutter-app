@@ -2,17 +2,19 @@
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class SenderBox extends StatefulWidget {
   SenderBox({
-    super.key,
+    Key? key,
     required this.message,
     required this.type,
     required this.uid,
-  });
+  }) : super(key: key);
+
   final String message;
   final String type;
   final String uid;
@@ -26,20 +28,42 @@ class _SenderBoxState extends State<SenderBox> {
   Duration _duration = Duration();
   Duration _position = Duration();
 
-  bool isplaying = false;
+  bool isPlaying = false;
+
+  Future<String> getImageUrl(String uid) async {
+    final userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final imageUrl = userSnapshot.data()?['photourl'] as String?;
+    return imageUrl ?? 'https://example.com/default-image.png';
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
     return Row(
       children: [
-        CircleAvatar(
-            backgroundColor: Colors.white,
-            child: Image.network(
-              'https://avatars.dicebear.com/api/identicon/${widget.uid}.svg',
-              width: 20,
-              height: 20,
-            )),
+        FutureBuilder<String>(
+          future: getImageUrl(widget.uid),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircleAvatar(
+                backgroundColor: Colors.white,
+              );
+            } else if (snapshot.hasError) {
+              return CircleAvatar(
+                backgroundColor: Colors.white,
+                // Display error icon if there's an error
+              );
+            } else {
+              return CircleAvatar(
+                backgroundColor: Colors.white,
+                backgroundImage: NetworkImage(snapshot.data!),
+                radius: 20,
+              );
+            }
+          },
+        ),
         SizedBox(
           width: 10,
         ),
@@ -49,18 +73,20 @@ class _SenderBoxState extends State<SenderBox> {
                   width: 200,
                   margin: EdgeInsets.only(top: 10),
                   decoration: BoxDecoration(
-                      color: Color(0xFF3a3f54),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(20),
-                        bottomRight: Radius.circular(20),
-                        topRight: Radius.circular(20),
-                      )),
+                    color: Color.fromARGB(255, 223, 224, 226),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Center(
-                        child: Text(
-                      widget.message,
-                    )),
+                      child: Text(
+                        widget.message,
+                      ),
+                    ),
                   ),
                 ),
               )
@@ -68,12 +94,13 @@ class _SenderBoxState extends State<SenderBox> {
                 width: 200,
                 margin: EdgeInsets.only(top: 10),
                 decoration: BoxDecoration(
-                    color: Color(0xFF3a3f54),
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                      topRight: Radius.circular(20),
-                    )),
+                  color: Color.fromARGB(255, 223, 224, 226),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
                 child: StatefulBuilder(builder: (context, setState) {
                   return Container(
                     width: width * 0.58,
@@ -85,37 +112,43 @@ class _SenderBoxState extends State<SenderBox> {
                             minWidth: 50,
                           ),
                           onPressed: () async {
-                            if (isplaying) {
+                            if (isPlaying) {
                               await audioPlayer.pause();
                               setState(() {
-                                isplaying = false;
+                                isPlaying = false;
                               });
                             } else {
-                              audioPlayer.onDurationChanged
-                                  .listen((Duration duration) {
-                                setState(() => _duration = duration);
-                              });
-                              audioPlayer.onPositionChanged
-                                  .listen((Duration position) {
-                                setState(() => _position = position);
-                              });
-                              audioPlayer.onPlayerStateChanged.listen((state) {
-                                if (state == PlayerState.completed) {
-                                  setState(() {
-                                    _position = Duration();
-                                    isplaying = false;
-                                  });
-                                }
-                              });
+                              audioPlayer.onDurationChanged.listen(
+                                (Duration duration) {
+                                  setState(() => _duration = duration);
+                                },
+                              );
+                              audioPlayer.onPositionChanged.listen(
+                                (Duration position) {
+                                  setState(() => _position = position);
+                                },
+                              );
+                              audioPlayer.onPlayerStateChanged.listen(
+                                (state) {
+                                  if (state == PlayerState.completed) {
+                                    setState(() {
+                                      _position = Duration();
+                                      isPlaying = false;
+                                    });
+                                  }
+                                },
+                              );
 
-                              await audioPlayer.play(UrlSource(widget.message));
+                              await audioPlayer.play(
+                                UrlSource(widget.message),
+                              );
                               setState(() {
-                                isplaying = true;
+                                isPlaying = true;
                               });
                             }
                           },
                           icon: Icon(
-                            isplaying ? Icons.pause_circle : Icons.play_circle,
+                            isPlaying ? Icons.pause_circle : Icons.play_circle,
                           ),
                         ),
                         SizedBox(
@@ -134,7 +167,8 @@ class _SenderBoxState extends State<SenderBox> {
                       ],
                     ),
                   );
-                })),
+                }),
+              ),
       ],
     );
   }

@@ -12,6 +12,7 @@ import 'package:transparent_image/transparent_image.dart';
 import 'package:travelgram/auth/auth_methods.dart';
 import 'package:travelgram/auth/firestoremethods.dart';
 import 'package:travelgram/auth/user_provider.dart';
+import 'package:travelgram/screen/add_post.dart';
 import 'package:travelgram/screen/comment_modal_sheet.dart';
 import 'package:travelgram/screen/reccomendations_screen.dart';
 import 'package:travelgram/utils/show_more.dart';
@@ -39,18 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (_) => AddPost()));
+            },
+            child: AppBarIcon(
+              iconData: Boxicons.bxs_image_add,
+              color: Colors.white,
+              iconColor: Colors.black,
+            ),
           ),
           SizedBox(
             width: 16,

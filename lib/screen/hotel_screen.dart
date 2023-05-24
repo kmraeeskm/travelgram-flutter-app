@@ -40,24 +40,6 @@ class _HotelScreenState extends State<HotelScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

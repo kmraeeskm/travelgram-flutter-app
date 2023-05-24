@@ -28,6 +28,7 @@ class _AddPostState extends State<AddPost> {
   String c = '';
   String p = '';
   final TextEditingController _descController = TextEditingController();
+  final TextEditingController _locController = TextEditingController();
 
   PlatformFile? pickedFile;
   UploadTask? task;
@@ -57,6 +58,7 @@ class _AddPostState extends State<AddPost> {
     setState(() {
       c = city;
       p = administrativeArea;
+      _locController.text = '$c,$p';
     });
   }
 
@@ -165,29 +167,29 @@ class _AddPostState extends State<AddPost> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Travelgram',
+          'Add Post',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
+        // actions: [
+        //   AppBarIcon(
+        //     iconData: Boxicons.bx_chat,
+        //     color: Colors.white,
+        //     iconColor: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 16,
+        //   ),
+        //   AppBarIcon(
+        //     iconData: Boxicons.bx_message,
+        //     color: Colors.white,
+        //     iconColor: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 16,
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -288,7 +290,12 @@ class _AddPostState extends State<AddPost> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("$c, $p"),
+                                TextField(
+                                  controller: _locController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                                 Text('location'),
                               ],
                             ),

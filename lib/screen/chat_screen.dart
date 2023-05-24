@@ -95,6 +95,12 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void sendMessage() async {
+    try {
+      await _firestore.collection('chats').doc(widget.roomID).set({'set': ''});
+    } catch (e) {
+      print(e.toString());
+    }
+    print('invoked');
     print(widget.roomID);
     Map<String, dynamic> message = {
       "by": user.uid,
@@ -111,15 +117,7 @@ class _ChatScreenState extends State<ChatScreen> {
     } catch (e) {
       print(e.toString());
     }
-    try {
-      await _firestore
-          .collection('chats')
-          .doc(widget.roomID)
-          .collection('messages')
-          .add(message);
-    } catch (e) {
-      print(e.toString());
-    }
+
     _message.clear();
   }
 
@@ -194,23 +192,23 @@ class _ChatScreenState extends State<ChatScreen> {
                               child: Icon(CupertinoIcons.back)),
                           title: Row(
                             children: [
-                              snap['status'] == 'online'
-                                  ? Container(
-                                      height: 10,
-                                      width: 10,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.green,
-                                      ),
-                                    )
-                                  : Container(
-                                      height: 10,
-                                      width: 10,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.red,
-                                      ),
-                                    ),
+                              // snap['status'] == 'online'
+                              //     ? Container(
+                              //         height: 10,
+                              //         width: 10,
+                              //         decoration: BoxDecoration(
+                              //           shape: BoxShape.circle,
+                              //           color: Colors.green,
+                              //         ),
+                              //       )
+                              //     : Container(
+                              //         height: 10,
+                              //         width: 10,
+                              //         decoration: BoxDecoration(
+                              //           shape: BoxShape.circle,
+                              //           color: Colors.red,
+                              //         ),
+                              //       ),
                               SizedBox(
                                 width: 10,
                               ),
@@ -320,7 +318,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   child: Container(
                                     height: 40,
                                     decoration: BoxDecoration(
-                                      color: Color(0xFF3a3f54),
+                                      color: Color.fromARGB(255, 223, 224, 226),
                                       borderRadius: BorderRadius.all(
                                         Radius.circular(20),
                                       ),
@@ -343,6 +341,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
+                                    print(!_message.text.isEmpty);
                                     if (!_message.text.isEmpty) {
                                       sendMessage();
                                     } else {
