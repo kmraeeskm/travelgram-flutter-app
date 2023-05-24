@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:stepper_counter_swipe/stepper_counter_swipe.dart';
 import 'package:travelgram/screen/rate.dart';
 import 'package:travelgram/screen/review_modal_sheet.dart';
+import 'package:uuid/uuid.dart';
 
 class FoodDetails extends StatefulWidget {
   const FoodDetails({
@@ -31,6 +34,7 @@ class FoodDetails extends StatefulWidget {
 class _FoodStateDetails extends State<FoodDetails> {
   String c = '';
   String p = '';
+  int foodcount = 1;
 
   @override
   void initState() {
@@ -53,6 +57,77 @@ class _FoodStateDetails extends State<FoodDetails> {
     final ratingData = documentSnapshot.data();
 
     return ratingData as Map<String, dynamic>;
+  }
+
+  Future orderFood() async {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final user = FirebaseAuth.instance.currentUser!;
+    String BookingId = const Uuid().v1();
+    await _firestore.collection('orders').doc(widget.postId).set({'set': ''});
+    String docId = selectedDateTime.toString().split(" ")[0];
+    try {
+      await _firestore
+          .collection('orders')
+          .doc(widget.postId)
+          .collection(docId)
+          .doc(BookingId)
+          .set({
+        'bookingId': BookingId,
+        'uId': user.uid,
+        'amount': foodcount,
+        'time': DateTime.now(),
+        'datetime': selectedDateTime,
+        'foodName': widget.foodName,
+        'foodId': widget.postId,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+
+    try {
+      _firestore.collection('foods').doc(widget.postId).update({
+        'orders': FieldValue.arrayUnion([BookingId])
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+    try {
+      _firestore.collection('users').doc(user.uid).update({
+        'orders': FieldValue.arrayUnion([BookingId])
+      });
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  late DateTime selectedDateTime;
+  Future<void> _selectDateTime(BuildContext context) async {
+    final DateTime? pickedDateTime = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (pickedDateTime != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (pickedTime != null) {
+        setState(() {
+          selectedDateTime = DateTime(
+            pickedDateTime.year,
+            pickedDateTime.month,
+            pickedDateTime.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          );
+        });
+      }
+    }
+    if (selectedDateTime != null) {
+      orderFood();
+    }
   }
 
   @override
@@ -109,19 +184,21 @@ class _FoodStateDetails extends State<FoodDetails> {
                                 builder: (BuildContext context,
                                     AsyncSnapshot<Map<String, dynamic>>
                                         snapshot) {
+                                  double ratingData = 0;
                                   if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
+                                    ratingData = 0;
                                   }
 
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
                                     return CircularProgressIndicator();
                                   }
+                                  print(snapshot.data);
+                                  if (snapshot.data != null) {
+                                    ratingData = snapshot.data!['rating'] ?? 0;
+                                  }
 
-                                  final ratingData = snapshot.data ?? {};
-
-                                  return Text(
-                                      ratingData['rating'].toStringAsFixed(1));
+                                  return Text(ratingData.toStringAsFixed(1));
                                 },
                               ),
                               IconButton(
@@ -361,6 +438,59 @@ class _FoodStateDetails extends State<FoodDetails> {
               ],
             ),
           ),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 10,
+        ),
+        color: Colors.white,
+        height: 80,
+        child: Row(
+          children: [
+            Container(
+              width: 100,
+              child: StepperSwipe(
+                stepperValue: 1,
+                initialValue: 1,
+                withPlusMinus: true,
+                withFastCount: true,
+                speedTransitionLimitCount: 40,
+                onChanged: (int value) {
+                  foodcount = value;
+                },
+                firstIncrementDuration: Duration(milliseconds: 250),
+                secondIncrementDuration: Duration(microseconds: 1),
+                direction: Axis.horizontal,
+                dragButtonColor: Color(0xFFbd91d4),
+                maxValue: 500,
+                minValue: 0,
+              ),
+            ),
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  _selectDateTime(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.black,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        'order now',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

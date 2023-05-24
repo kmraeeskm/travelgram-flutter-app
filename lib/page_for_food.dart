@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:travelgram/screen/food/AddFood.dart';
+import 'package:travelgram/screen/food/foodBookings.dart';
 import 'package:travelgram/screen/profile.dart';
 import 'screen/food/foods.dart';
 
@@ -16,6 +17,7 @@ class IndexPageFood extends StatefulWidget {
 class Index_PageState extends State<IndexPageFood> {
   int cIndex = 0;
   List pages = [
+    Foods(),
     Foods(),
     AddFood(),
     ProfilePage(),
@@ -56,7 +58,7 @@ class Index_PageState extends State<IndexPageFood> {
                   onTap(0);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.ticket,
+                  iconData: CupertinoIcons.home,
                   color: cIndex == 0 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 0 ? Colors.white : Colors.black,
                 ),
@@ -66,7 +68,7 @@ class Index_PageState extends State<IndexPageFood> {
                   onTap(1);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.add,
+                  iconData: CupertinoIcons.ticket,
                   color: cIndex == 1 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 1 ? Colors.white : Colors.black,
                 ),
@@ -76,9 +78,19 @@ class Index_PageState extends State<IndexPageFood> {
                   onTap(2);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.profile_circled,
+                  iconData: CupertinoIcons.add,
                   color: cIndex == 2 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 2 ? Colors.white : Colors.black,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  onTap(3);
+                },
+                child: AppBarIcon(
+                  iconData: CupertinoIcons.profile_circled,
+                  color: cIndex == 3 ? Color(0xFFbd91d4) : Colors.white,
+                  iconColor: cIndex == 3 ? Colors.white : Colors.black,
                 ),
               ),
             ],

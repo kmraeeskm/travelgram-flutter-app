@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:travelgram/screen/food/foodBookings.dart';
 
 import 'review_modal_sheet.dart';
 
@@ -110,10 +111,20 @@ class _FoodsState extends State<Foods> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            CircleAvatar(
-                                              radius: 30,
-                                              backgroundImage:
-                                                  NetworkImage(image),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            FoodBookings(
+                                                              foodId: id,
+                                                            )));
+                                              },
+                                              child: CircleAvatar(
+                                                radius: 30,
+                                                backgroundImage:
+                                                    NetworkImage(image),
+                                              ),
                                             ),
                                             SizedBox(
                                               width: 20,
