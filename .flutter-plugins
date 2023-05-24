@@ -42,6 +42,7 @@ permission_handler=/home/denny/.pub-cache/hosted/pub.dev/permission_handler-10.2
 permission_handler_android=/home/denny/.pub-cache/hosted/pub.dev/permission_handler_android-10.2.0/
 permission_handler_apple=/home/denny/.pub-cache/hosted/pub.dev/permission_handler_apple-9.0.8/
 permission_handler_windows=/home/denny/.pub-cache/hosted/pub.dev/permission_handler_windows-0.1.2/
+qr_code_scanner=/home/denny/.pub-cache/hosted/pub.dev/qr_code_scanner-1.0.1/
 sound_recorder=/home/denny/.pub-cache/hosted/pub.dev/sound_recorder-0.0.2/
 stripe_android=/home/denny/.pub-cache/hosted/pub.dev/stripe_android-9.2.0/
 stripe_ios=/home/denny/.pub-cache/hosted/pub.dev/stripe_ios-9.2.0/

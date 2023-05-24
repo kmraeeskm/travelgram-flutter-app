@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:travelgram/auth/user_provider.dart';
 import 'package:travelgram/page_for_hotel.dart';
+import 'package:travelgram/screen/hotel/qr_scanner.dart';
 import 'package:travelgram/screen/hotel/userlist.dart';
 
 class DashBoardHostel extends StatefulWidget {
@@ -78,6 +79,24 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => QRScanner(),
+              ),
+            ),
+            child: AppBarIcon(
+              iconData: Boxicons.bx_qr,
+              color: Colors.white,
+              iconColor: Colors.black,
+            ),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
