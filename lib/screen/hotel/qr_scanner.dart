@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 class QRScanner extends StatefulWidget {
@@ -22,6 +23,7 @@ class _QRScannerState extends State<QRScanner> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   var name = '';
+  var date = '';
 
   @override
   void dispose() {
@@ -39,21 +41,17 @@ class _QRScannerState extends State<QRScanner> {
     }
   }
 
-  void updateArrayMap(String documentID, String userID) async {
-    final documentReference = _firestore.collection('bookings').doc(documentID);
-    final documentSnapshot = await documentReference.get();
+  String formatDateRange(String startDate, String endDate) {
+    print(startDate);
+    print(endDate);
+    final startDateTime = DateTime.parse(startDate);
+    print(startDateTime);
+    final endDateTime = DateTime.parse(endDate);
 
-    if (documentSnapshot.exists) {
-      print(documentSnapshot.data()!['certificate']);
-      List<Map<String, dynamic>> array =
-          List.from(documentSnapshot.data()!['certificate']);
-      int index = array.indexWhere((map) => map['id'] == userID);
+    final startFormatted = DateFormat.MMMMd().format(startDateTime);
+    final endFormatted = DateFormat.MMMMd().format(endDateTime);
 
-      if (index != -1) {
-        array[index]['participated'] = "Yes";
-        await documentReference.update({'certificate': array});
-      }
-    }
+    return '$startFormatted to $endFormatted';
   }
 
   void getUsername() async {
@@ -62,14 +60,23 @@ class _QRScannerState extends State<QRScanner> {
           .collection('bookings')
           .doc(result!.code)
           .get()
-          .then((value) async {
+          .then((Bvalue) async {
+        String dateRange = formatDateRange(
+            (Bvalue.data() as Map<String, dynamic>)['dates']
+                .toString()
+                .split(" ")[0],
+            (Bvalue.data() as Map<String, dynamic>)['dates']
+                .toString()
+                .split(" ")[3]
+                .replaceAll("-", ""));
         await FirebaseFirestore.instance
             .collection('users')
-            .doc((value.data() as Map<String, dynamic>)['uId'])
+            .doc((Bvalue.data() as Map<String, dynamic>)['uId'])
             .get()
             .then((value) {
           setState(() {
             name = (value.data() as Map<String, dynamic>)['username'];
+            date = dateRange;
           });
         });
       });
@@ -107,7 +114,12 @@ class _QRScannerState extends State<QRScanner> {
             flex: 1,
             child: Center(
               child: (name != '')
-                  ? Text('$name checked in 🥳')
+                  ? Column(
+                      children: [
+                        Text('$name checked in 🥳'),
+                        Text(date),
+                      ],
+                    )
                   : Text('Scan a code'),
             ),
           )
