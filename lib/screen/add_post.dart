@@ -72,7 +72,29 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
-  Future uploadFile() async {
+  void hideProgressDialog(VoidCallback hideCallback) {
+    hideCallback();
+  }
+
+  void showProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.4,
+          child: AlertDialog(
+            title: Text('Posting...'),
+            content: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future uploadFile(VoidCallback hideCallback) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     DocumentSnapshot snap = await FirebaseFirestore.instance
@@ -91,14 +113,15 @@ class _AddPostState extends State<AddPost> {
 
         final snapshot = await task!.whenComplete(() {});
         final urlDownload = await snapshot.ref.getDownloadURL();
-
+        String location =
+            _locController.text.replaceAll(" ", "").trim().toLowerCase();
         String postId = const Uuid().v1();
         try {
           _firestore.collection('posts').doc(postId).set({
             'postId': postId,
             'uId': user.uid,
             'imageUrl': urlDownload,
-            'location': '$c,$p',
+            'location': location,
             'time': DateTime.now(),
             'description': _descController.text,
             'name': snapd['username'],
@@ -154,6 +177,7 @@ class _AddPostState extends State<AddPost> {
         }
       }
     }
+    hideProgressDialog(hideCallback);
   }
 
   @override
@@ -290,10 +314,14 @@ class _AddPostState extends State<AddPost> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextField(
-                                  controller: _locController,
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: TextField(
+                                    controller: _locController,
+                                    decoration: InputDecoration(
+                                      border: InputBorder.none,
+                                    ),
                                   ),
                                 ),
                                 Text('location'),
@@ -338,8 +366,13 @@ class _AddPostState extends State<AddPost> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFbd91d4),
                 ),
-                onPressed: () {
-                  uploadFile();
+                onPressed: () async {
+                  showProgressDialog(context);
+                  await uploadFile(() {
+                    hideProgressDialog(() {
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                    });
+                  });
                 },
                 child: Text('upload'),
               ),

@@ -81,7 +81,31 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     });
   }
 
-  Future uploadHostel() async {
+  void showProgressDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          heightFactor: 0.4,
+          child: AlertDialog(
+            title: Text('Posting...'),
+            content: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void hideProgressDialog(
+    VoidCallback hideCallback,
+  ) {
+    hideCallback();
+  }
+
+  Future uploadHostel(VoidCallback hideCallback) async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     final fileMain = File(pickedFileMain!.path!);
@@ -151,27 +175,6 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     } catch (e) {
       print(e.toString());
     }
-    final materialBanner = MaterialBanner(
-      /// need to set following properties for best effect of awesome_snackbar_content
-      elevation: 0,
-      backgroundColor: Colors.transparent,
-      forceActionsBelow: true,
-      content: AwesomeSnackbarContent(
-        title: 'Oh Hey!!',
-        message:
-            'This is an example error message that will be shown in the body of materialBanner!',
-
-        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
-        contentType: ContentType.success,
-        // to configure for material banner
-        inMaterialBanner: true,
-      ),
-      actions: const [SizedBox.shrink()],
-    );
-
-    ScaffoldMessenger.of(context)
-      ..hideCurrentMaterialBanner()
-      ..showMaterialBanner(materialBanner);
   }
 
   @override
@@ -474,8 +477,29 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
                       ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () {
-                            uploadHostel();
+                          onTap: () async {
+                            showProgressDialog(context);
+                            await uploadHostel(() {
+                              hideProgressDialog(() {
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                              });
+                            });
+                            final materialBanner = MaterialBanner(
+                              elevation: 0,
+                              backgroundColor: Colors.transparent,
+                              content: AwesomeSnackbarContent(
+                                title: 'Yay',
+                                message: 'Hotel addded successfully.',
+                                contentType: ContentType.success,
+                                inMaterialBanner: true,
+                              ),
+                              actions: const [SizedBox.shrink()],
+                            );
+
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentMaterialBanner()
+                              ..showMaterialBanner(materialBanner);
                           },
                           child: Container(
                             decoration: BoxDecoration(

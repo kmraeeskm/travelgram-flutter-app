@@ -78,24 +78,6 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
           future: FirebaseFirestore.instance
@@ -113,6 +95,11 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
             print("data");
             print(data);
             print("data");
+            if (!data.containsKey('hotels')) {
+              return Center(
+                child: Text('Please Add your hotel to continue'),
+              );
+            }
             // print(data['hotels'][0]);
             return StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
@@ -213,7 +200,7 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                      '$inmates/${data["roomCount"]}',
+                                                      '$inmates/${datas["roomCount"]}',
                                                       style: TextStyle(
                                                           color: Colors.black)),
                                                   Text('Capacity',
@@ -332,6 +319,7 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                             MaterialPageRoute(
                                                 builder: (_) =>
                                                     UserListForAnalysis(
+                                                      c: false,
                                                       ids: uInmates,
                                                     )));
                                       },

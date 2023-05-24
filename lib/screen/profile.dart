@@ -199,7 +199,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           );
                         },
-                        child: Chip(label: Text('bookmarks')),
+                        child: Chip(
+                            label: Row(
+                          children: [
+                            // Text(
+                            //   'Bookmarks',
+                            //   style: TextStyle(fontSize: 16),
+                            // ),
+                            Icon(
+                              Boxicons.bx_bookmark_heart,
+                              size: 18,
+                            ),
+                          ],
+                        )),
                       ),
                       Text(
                         userModel.username,
@@ -212,7 +224,19 @@ class _ProfilePageState extends State<ProfilePage> {
                         onTap: () {
                           signOutUser();
                         },
-                        child: Chip(label: Text('Log out')),
+                        child: Chip(
+                            label: Row(
+                          children: [
+                            // Text(
+                            //   'Log out',
+                            //   style: TextStyle(fontSize: 16),
+                            // ),
+                            Icon(
+                              Boxicons.bx_lock,
+                              size: 18,
+                            ),
+                          ],
+                        )),
                       ),
                     ],
                   ),

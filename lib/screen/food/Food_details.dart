@@ -166,13 +166,11 @@ class _FoodStateDetails extends State<FoodDetails> {
                   top: 15,
                   left: 15,
                   child: SizedBox(
-                    height: 40,
-                    width: 90,
                     child: Center(
                       child: Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.white54,
+                            color: Color.fromARGB(59, 255, 255, 255),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
@@ -339,9 +337,10 @@ class _FoodStateDetails extends State<FoodDetails> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                      height: 45,
-                                      width: 150,
-                                      child: Text('write a review'),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('write a review'),
+                                      ),
                                     ),
                                   ],
                                 ),
