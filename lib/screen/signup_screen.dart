@@ -266,7 +266,6 @@ class _signupscreenState extends State<signupscreen> {
                       onTap: () {
                         if (_selectedUserType == "traveller") {
                           SignuUser();
-                          print("normal user");
                         } else if (_selectedUserType == "hotel") {
                           Signhotel();
                         } else {

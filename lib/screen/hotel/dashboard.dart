@@ -108,7 +108,11 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                 child: CircularProgressIndicator(),
               );
             }
+            print('#1');
             final data = snapshota.data!.data() as Map<String, dynamic>;
+            print("data");
+            print(data);
+            print("data");
             // print(data['hotels'][0]);
             return StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
@@ -116,205 +120,129 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                     .doc(data['hotels'][0])
                     .snapshots(),
                 builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-                  if (snapshot.hasData) {
-                    final data = snapshot.data!.data() as Map<String, dynamic>;
-                    if (data != null && data.containsKey('bookings')) {
-                      final bookings = List<String>.from(data['bookings']);
-                      print(bookings);
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (snapshot.data!.data() == null) {
+                    return Center(
+                      child: Text('Please Add hotels to continue'),
+                    );
+                  }
 
-                      return FutureBuilder<dynamic>(
-                          future: check(bookings),
-                          builder: (context, snapshot) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0),
-                                  child: Text.rich(
-                                    TextSpan(
-                                      text: 'Hello\n',
-                                      style: TextStyle(
-                                        fontSize: height * 0.035,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: '${userModel!.username} 🛏️\n',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: height * 0.04,
-                                          ),
-                                        ),
-                                      ],
+                  print('#2');
+                  print(snapshot.data!.data());
+
+                  print('#3');
+                  print("snapshot.data!.data()");
+                  print(snapshot.data!.data());
+                  final datas = snapshot.data!.data() as Map<String, dynamic>;
+                  print("datas");
+                  print(datas);
+                  print("data.containsKey('bookings')");
+                  print(datas.containsKey('bookings'));
+                  if (datas != null && datas.containsKey('bookings')) {
+                    final bookings = List<String>.from(datas['bookings']);
+                    print(bookings);
+
+                    return FutureBuilder<dynamic>(
+                        future: check(bookings),
+                        builder: (context, snapshot) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0),
+                                child: Text.rich(
+                                  TextSpan(
+                                    text: 'Hello\n',
+                                    style: TextStyle(
+                                      fontSize: height * 0.035,
                                     ),
+                                    children: [
+                                      TextSpan(
+                                        text: '${userModel!.username} 🛏️\n',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: height * 0.04,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(
-                                  height: height * 0.05,
-                                ),
-                                SizedBox(
-                                    height: height * 0.35,
-                                    child: CircularSeekBar(
-                                      width: double.infinity,
-                                      height: 250,
-                                      progress:
-                                          double.parse(inmates.toString()),
-                                      barWidth: 8,
-                                      startAngle: 45,
-                                      sweepAngle: 270,
-                                      strokeCap: StrokeCap.butt,
-                                      progressGradientColors: const [
-                                        Colors.red,
-                                        Colors.orange,
-                                        Colors.yellow,
-                                        Colors.green,
-                                        Colors.blue,
-                                        Colors.indigo,
-                                        Colors.purple
-                                      ],
-                                      innerThumbRadius: 5,
-                                      innerThumbStrokeWidth: 3,
-                                      innerThumbColor: Colors.white,
-                                      outerThumbRadius: 5,
-                                      outerThumbStrokeWidth: 10,
-                                      outerThumbColor: Colors.blueAccent,
-                                      dashWidth: 1,
-                                      dashGap: 2,
-                                      animation: true,
-                                      // valueNotifier: _valueNotifier,
-                                      child: Center(
-                                        child: ValueListenableBuilder(
-                                            valueListenable: _valueNotifier,
-                                            builder: (_, double value, __) =>
-                                                Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                        '$inmates/${data["roomCount"]}',
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black)),
-                                                    Text('Capacity',
-                                                        style: TextStyle()),
-                                                  ],
-                                                )),
-                                      ),
-                                    )),
-                                SizedBox(
-                                  height: 200,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          // Navigator.of(context).push(
-                                          //   MaterialPageRoute(
-                                          //     builder: (_) => Patients(),
-                                          //   ),
-                                          // );
-                                        },
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        UserListForAnalysis(
-                                                          ids: cInmates,
-                                                        )));
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(30),
-                                              ),
-                                              color: Color(0xFFe5e5fe),
-                                            ),
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.23,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.38,
-                                            child: Stack(
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      18.0),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Container(
-                                                        width: 40,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          // borderRadius: BorderRadius.circular(100),
-                                                          color: Color(
-                                                            0xFFd7d5fc,
-                                                          ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8.0),
-                                                          child: Center(
-                                                            child: FaIcon(
-                                                                FontAwesomeIcons
-                                                                    .peopleLine),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 60,
-                                                      ),
-                                                      Text(
-                                                        'Current\nInmates',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      // FutureBuilder<int>(
-                                                      //     future: getPatientsCount(user.uid),
-                                                      //     builder: (context, snapshot) {
-                                                      //       if (snapshot.hasData) {
-                                                      //         int count = snapshot.data!;
-                                                      //         return Text('$count pharmacies');
-                                                      //       }
-                                                      //       return Container();
-                                                      //     }),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: 10,
-                                                  right: 10,
-                                                  child: FaIcon(
-                                                    FontAwesomeIcons.hotel,
-                                                    color: Color(0xFFd7d5fc),
-                                                    size: 40,
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      GestureDetector(
+                              ),
+                              SizedBox(
+                                height: height * 0.05,
+                              ),
+                              SizedBox(
+                                  height: height * 0.35,
+                                  child: CircularSeekBar(
+                                    width: double.infinity,
+                                    height: 250,
+                                    progress: double.parse(inmates.toString()),
+                                    barWidth: 8,
+                                    startAngle: 45,
+                                    sweepAngle: 270,
+                                    strokeCap: StrokeCap.butt,
+                                    progressGradientColors: const [
+                                      Colors.red,
+                                      Colors.orange,
+                                      Colors.yellow,
+                                      Colors.green,
+                                      Colors.blue,
+                                      Colors.indigo,
+                                      Colors.purple
+                                    ],
+                                    innerThumbRadius: 5,
+                                    innerThumbStrokeWidth: 3,
+                                    innerThumbColor: Colors.white,
+                                    outerThumbRadius: 5,
+                                    outerThumbStrokeWidth: 10,
+                                    outerThumbColor: Colors.blueAccent,
+                                    dashWidth: 1,
+                                    dashGap: 2,
+                                    animation: true,
+                                    // valueNotifier: _valueNotifier,
+                                    child: Center(
+                                      child: ValueListenableBuilder(
+                                          valueListenable: _valueNotifier,
+                                          builder: (_, double value, __) =>
+                                              Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                      '$inmates/${data["roomCount"]}',
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                  Text('Capacity',
+                                                      style: TextStyle()),
+                                                ],
+                                              )),
+                                    ),
+                                  )),
+                              SizedBox(
+                                height: 200,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        // Navigator.of(context).push(
+                                        //   MaterialPageRoute(
+                                        //     builder: (_) => Patients(),
+                                        //   ),
+                                        // );
+                                      },
+                                      child: GestureDetector(
                                         onTap: () {
                                           Navigator.of(context).push(
                                               MaterialPageRoute(
                                                   builder: (_) =>
                                                       UserListForAnalysis(
-                                                        ids: uInmates,
+                                                        ids: cInmates,
                                                       )));
                                         },
                                         child: Container(
@@ -344,9 +272,8 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                                     Container(
                                                       width: 40,
                                                       decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(100),
+                                                        shape: BoxShape.circle,
+                                                        // borderRadius: BorderRadius.circular(100),
                                                         color: Color(
                                                           0xFFd7d5fc,
                                                         ),
@@ -358,7 +285,7 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                                         child: Center(
                                                           child: FaIcon(
                                                               FontAwesomeIcons
-                                                                  .peopleGroup),
+                                                                  .peopleLine),
                                                         ),
                                                       ),
                                                     ),
@@ -366,7 +293,7 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                                       height: 60,
                                                     ),
                                                     Text(
-                                                      'Upcoming Inmates',
+                                                      'Current\nInmates',
                                                       style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -398,22 +325,113 @@ class _DashBoardHostelState extends State<DashBoardHostel> {
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            );
-                          });
-                      // return ListView.builder(
-                      //   itemCount: bookings.length,
-                      //   itemBuilder: (BuildContext context, int index) {
-                      //     print(bookings.length);
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (_) =>
+                                                    UserListForAnalysis(
+                                                      ids: uInmates,
+                                                    )));
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(30),
+                                          ),
+                                          color: Color(0xFFe5e5fe),
+                                        ),
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.23,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.38,
+                                        child: Stack(
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(18.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: 40,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                      color: Color(
+                                                        0xFFd7d5fc,
+                                                      ),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Center(
+                                                        child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .peopleGroup),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 60,
+                                                  ),
+                                                  Text(
+                                                    'Upcoming Inmates',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  // FutureBuilder<int>(
+                                                  //     future: getPatientsCount(user.uid),
+                                                  //     builder: (context, snapshot) {
+                                                  //       if (snapshot.hasData) {
+                                                  //         int count = snapshot.data!;
+                                                  //         return Text('$count pharmacies');
+                                                  //       }
+                                                  //       return Container();
+                                                  //     }),
+                                                ],
+                                              ),
+                                            ),
+                                            Positioned(
+                                              top: 10,
+                                              right: 10,
+                                              child: FaIcon(
+                                                FontAwesomeIcons.hotel,
+                                                color: Color(0xFFd7d5fc),
+                                                size: 40,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          );
+                        });
+                    // return ListView.builder(
+                    //   itemCount: bookings.length,
+                    //   itemBuilder: (BuildContext context, int index) {
+                    //     print(bookings.length);
 
-                      //   },
-                      // );
-                    }
+                    //   },
+                    // );
+                  } else {
+                    return Center(
+                      child: Text('No bookings yet'),
+                    );
                   }
-                  return Container();
                 });
           }),
     );

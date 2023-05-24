@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,10 +31,13 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
   PlatformFile? pickedFileMain;
   TextEditingController hotelName = TextEditingController();
   TextEditingController hotelDesc = TextEditingController();
+  TextEditingController location = TextEditingController();
+
   String c = '';
   String p = '';
   int roomCount = 0;
   bool isNAc = false;
+  int rate = 1000;
 
   bool isAc = false;
   int AcC = 0;
@@ -73,6 +77,7 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
 
       c = city;
       p = administrativeArea;
+      location.text = '$c,$p';
     });
   }
 
@@ -89,17 +94,19 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     final snapshot = await task!.whenComplete(() {});
     final urlDownloadMain = await snapshot.ref.getDownloadURL();
     print(urlDownloadMain);
+    String loc = location.text.replaceAll(" ", "").trim().toLowerCase();
 
     try {
       _firestore.collection('hotels').doc(postId).set({
         'postId': postId,
         'uId': user.uid,
         'imageUrl': urlDownloadMain,
-        'location': '$c,$p',
+        'location': loc,
         'time': DateTime.now(),
         'description': hotelDesc.text,
         'name': hotelName.text,
         'roomCount': roomCount,
+        'rate': rate,
 
         // 'Ac': isAc,
         // 'NAc': isNAc,
@@ -144,6 +151,27 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
     } catch (e) {
       print(e.toString());
     }
+    final materialBanner = MaterialBanner(
+      /// need to set following properties for best effect of awesome_snackbar_content
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      forceActionsBelow: true,
+      content: AwesomeSnackbarContent(
+        title: 'Oh Hey!!',
+        message:
+            'This is an example error message that will be shown in the body of materialBanner!',
+
+        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+        contentType: ContentType.success,
+        // to configure for material banner
+        inMaterialBanner: true,
+      ),
+      actions: const [SizedBox.shrink()],
+    );
+
+    ScaffoldMessenger.of(context)
+      ..hideCurrentMaterialBanner()
+      ..showMaterialBanner(materialBanner);
   }
 
   @override
@@ -258,19 +286,39 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
                     ],
                   ),
                 ),
+                // Container(
+                //   decoration: BoxDecoration(
+                //     color: Color.fromARGB(255, 255, 232, 232),
+                //     borderRadius: BorderRadius.circular(20),
+                //   ),
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     child:
                 TextField(
                   controller: hotelName,
                   decoration: InputDecoration(
                     hintText: 'Hotel Name',
                     border: InputBorder.none,
                   ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                Text("$c, $p"),
+                // ),
+                // ),
+                // Text("$c, $p"),
                 // ExpandableShowMoreWidget(
                 //   text:
                 //       ' to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10',
                 //   height: 150,
                 // )
+
+                TextField(
+                  controller: location,
+                  decoration: InputDecoration(
+                    hintText: 'location',
+                    border: InputBorder.none,
+                  ),
+                ),
+
                 TextField(
                   maxLines: 3,
                   controller: hotelDesc,
@@ -384,7 +432,27 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
                           maxValue: 500,
                           minValue: 0,
                         ),
-                      )
+                      ),
+                      Text('Rate'),
+                      Container(
+                        height: 60,
+                        child: StepperSwipe(
+                          stepperValue: 500,
+                          initialValue: 500,
+                          withPlusMinus: true,
+                          withFastCount: true,
+                          speedTransitionLimitCount: 100,
+                          onChanged: (int value) {
+                            rate = value;
+                          },
+                          firstIncrementDuration: Duration(milliseconds: 200),
+                          secondIncrementDuration: Duration(microseconds: 1),
+                          direction: Axis.horizontal,
+                          dragButtonColor: Color(0xFFbd91d4),
+                          maxValue: 10000,
+                          minValue: 0,
+                        ),
+                      ),
                       // :
                       //  SizedBox(
                       //     width: 20,
