@@ -66,13 +66,13 @@ class _HotelScreenState extends State<HotelScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Text.rich(
               TextSpan(
-                text: 'Explore this\n',
+                text: 'Find best hotels for\n',
                 style: TextStyle(
                   fontSize: height * 0.035,
                 ),
                 children: [
                   TextSpan(
-                    text: 'Wonderful World\n',
+                    text: 'Your Special Moments!\n',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: height * 0.04,
@@ -281,10 +281,15 @@ class PostBox extends StatelessWidget {
                     ),
                   ],
                 ),
-                ExpandableShowMoreWidget(
-                  text: bio,
-                  height: 50,
+                Text(
+                  bio,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
                 ),
+                // ExpandableShowMoreWidget(
+                //   text: bio,
+                //   height: 50,
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

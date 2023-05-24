@@ -240,6 +240,7 @@ class _HotelDetailsState extends State<HotelDetails> {
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -294,11 +295,32 @@ class _HotelDetailsState extends State<HotelDetails> {
                     ],
                   ),
                 ),
-                Text(widget.snap['name']),
-                Text(widget.snap['location']),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.snap['name'],
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.snap['location'],
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
                 ExpandableShowMoreWidget(
                   text: widget.snap['description'],
-                  height: 150,
+                  height: 100,
                 )
               ],
             ),
