@@ -14,16 +14,15 @@ import 'package:travelgram/screen/food/edit_food.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/login_screen.dart';
 import 'package:travelgram/screen/reccomendations_screen.dart';
-import 'package:travelgram/screen/view_bookmarks.dart';
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+class BookMarksPage extends StatefulWidget {
+  const BookMarksPage({super.key});
 
   @override
-  State<ProfilePage> createState() => _ProfilePageState();
+  State<BookMarksPage> createState() => _BookMarksPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _BookMarksPageState extends State<BookMarksPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser!;
   List<dynamic> postIDsOfUser = [];
@@ -41,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
     print(type);
     if (type == 'traveller') {
       await _firestore.collection('users').doc(user.uid).get().then((doc) {
-        postIDsOfUser = doc.data()!['posts'];
+        postIDsOfUser = doc.data()!['bookmarks'];
       });
     } else {
       if (type == 'hotel') {
@@ -130,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Travelgram',
+          'Bookmarks',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -141,96 +140,19 @@ class _ProfilePageState extends State<ProfilePage> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Stack(
-                children: [
-                  SizedBox(
-                    height: 200,
-                    width: double.maxFinite,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image(
-                        fit: BoxFit.fill,
-                        image: NetworkImage(
-                            'https://images.pexels.com/photos/2876511/pexels-photo-2876511.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Transform.translate(
-                        offset: Offset(0, 30),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundImage: NetworkImage(
-                                userModel!.photourl,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               SizedBox(
                 height: 30,
               ),
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => BookMarksPage(),
-                            ),
-                          );
-                        },
-                        child: Chip(label: Text('bookmarks')),
-                      ),
-                      Text(
-                        userModel.username,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          signOutUser();
-                        },
-                        child: Chip(label: Text('Log out')),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                ],
-              ),
               Expanded(
                 child: FutureBuilder(
-                  future: getpostIDsOfUser(userModel.type),
+                  future: getpostIDsOfUser(userModel!.type),
                   builder: ((context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Container();
                     }
                     if (postIDsOfUser.isEmpty) {
                       return Center(
-                        child: Text('No posts found.'),
+                        child: Text('No bookmarks found.'),
                       );
                     }
                     if (snapshot.connectionState == ConnectionState.done) {

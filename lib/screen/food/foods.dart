@@ -59,132 +59,129 @@ class _FoodsState extends State<Foods> {
                   child: SizedBox(
                     height: height * 0.9,
                     width: width,
-                    child: ClipPath(
-                      clipper:
-                          CustomClipperRectangle(sizeW: width, sizeH: height),
-                      child: Container(
-                        width: 180,
-                        height: 130,
-                        padding: EdgeInsets.only(top: 20),
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                              Color.fromARGB(255, 222, 221, 228),
-                              Color.fromARGB(195, 230, 227, 230)
-                            ])),
-                        child:
-                            FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                          future: FirebaseFirestore.instance
-                              .collection('foods')
-                              .get(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState ==
-                                ConnectionState.waiting) {
-                              // While data is being fetched, show a loading indicator
-                              return Center(child: CircularProgressIndicator());
-                            } else if (snapshot.data == null) {
-                              // If an error occurs, display an error message
-                              return Text('Add Some Foods');
-                            } else {
-                              // If data fetching is successful, process the documents
-                              final List<
-                                      QueryDocumentSnapshot<
-                                          Map<String, dynamic>>> documents =
-                                  snapshot.data!.docs;
+                    child: Container(
+                      width: 180,
+                      height: 130,
+                      padding: EdgeInsets.only(top: 20),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromARGB(255, 222, 221, 228),
+                                Color.fromARGB(195, 230, 227, 230)
+                              ])),
+                      child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                        future: FirebaseFirestore.instance
+                            .collection('foods')
+                            .get(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            // While data is being fetched, show a loading indicator
+                            return Center(child: CircularProgressIndicator());
+                          } else if (snapshot.data == null) {
+                            // If an error occurs, display an error message
+                            return Text('Add Some Foods');
+                          } else {
+                            // If data fetching is successful, process the documents
+                            final List<
+                                    QueryDocumentSnapshot<Map<String, dynamic>>>
+                                documents = snapshot.data!.docs;
 
-                              return Column(
-                                children: documents.map((doc) {
-                                  final food = doc.get('food') as String;
-                                  final rating = doc.get('rating');
-                                  final image = doc.get('imageUrl') as String;
-                                  final id = doc.get('postId') as String;
+                            return Column(
+                              children: documents.map((doc) {
+                                final food = doc.get('food') as String;
+                                final rating = doc.get('rating');
+                                final image = doc.get('imageUrl') as String;
+                                final id = doc.get('postId') as String;
 
-                                  return Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (_) =>
-                                                            FoodBookings(
-                                                              foodId: id,
-                                                            )));
-                                              },
-                                              child: CircleAvatar(
-                                                radius: 30,
-                                                backgroundImage:
-                                                    NetworkImage(image),
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          FoodBookings(
+                                                            foodId: id,
+                                                          )));
+                                            },
+                                            child: CircleAvatar(
+                                              radius: 30,
+                                              backgroundImage:
+                                                  NetworkImage(image),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 10,
                                               ),
-                                            ),
-                                            SizedBox(
-                                              width: 20,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  height: 10,
+                                              Text(
+                                                food,
+                                                style: TextStyle(
+                                                  fontSize: height * 0.02,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                                Text(
-                                                  food,
-                                                  style: TextStyle(
-                                                    fontSize: height * 0.02,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                                GestureDetector(
-                                                    onTap: () {
-                                                      showModalBottomSheet(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
-                                                          context: context,
-                                                          builder: (context) {
-                                                            return ReviewModalSheet(
-                                                              postID: id,
-                                                            );
-                                                          });
-                                                    },
-                                                    child:
-                                                        Text('view reviews')),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text(rating.toString()),
-                                            SizedBox(
-                                              width: 5,
-                                            ),
-                                            Icon(
-                                              CupertinoIcons.star_fill,
-                                              color: Color.fromARGB(
-                                                  255, 224, 211, 21),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              );
-                            }
-                          },
-                        ),
+                                              ),
+                                              GestureDetector(
+                                                  onTap: () {
+                                                    showModalBottomSheet(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10)),
+                                                        context: context,
+                                                        builder: (context) {
+                                                          return ReviewModalSheet(
+                                                            postID: id,
+                                                          );
+                                                        });
+                                                  },
+                                                  child: Text('view reviews')),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(rating.toString()),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          Icon(
+                                            CupertinoIcons.star_fill,
+                                            color: Color.fromARGB(
+                                                255, 224, 211, 21),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            );
+                          }
+                        },
                       ),
                     ),
                   ),

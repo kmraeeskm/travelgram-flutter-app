@@ -225,12 +225,20 @@ class PostBox extends StatelessWidget {
               ),
               Container(
                 height: 400,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imageurl,
-                    fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => ReccomenadtionsScreen(
+                              postId: pid,
+                            )));
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage,
+                      image: imageurl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ),

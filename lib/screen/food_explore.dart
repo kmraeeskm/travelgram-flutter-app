@@ -144,7 +144,7 @@ class _FoodExploreState extends State<FoodExplore> {
                 itemBuilder: (context, index) {
                   if (searchText == '' ||
                       _foods[index]
-                          .location
+                          .food
                           .toLowerCase()
                           .contains(searchText.toLowerCase())) {
                     return Padding(

@@ -41,24 +41,24 @@ class _ReccomenadtionsScreenState extends State<ReccomenadtionsScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          AppBarIcon(
-            iconData: Boxicons.bx_chat,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-          AppBarIcon(
-            iconData: Boxicons.bx_message,
-            color: Colors.white,
-            iconColor: Colors.black,
-          ),
-          SizedBox(
-            width: 16,
-          ),
-        ],
+        // actions: [
+        //   AppBarIcon(
+        //     iconData: Boxicons.bx_chat,
+        //     color: Colors.white,
+        //     iconColor: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 16,
+        //   ),
+        //   AppBarIcon(
+        //     iconData: Boxicons.bx_message,
+        //     color: Colors.white,
+        //     iconColor: Colors.black,
+        //   ),
+        //   SizedBox(
+        //     width: 16,
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         child: FutureBuilder<DocumentSnapshot>(

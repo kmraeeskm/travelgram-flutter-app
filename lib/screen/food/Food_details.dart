@@ -228,140 +228,139 @@ class _FoodStateDetails extends State<FoodDetails> {
                   child: SizedBox(
                     height: height * 0.5,
                     width: width,
-                    child: ClipPath(
-                      clipper:
-                          CustomClipperRectangle(sizeW: width, sizeH: height),
-                      child: Container(
-                        width: 180,
-                        height: 130,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                              Color.fromARGB(255, 222, 221, 228),
-                              Color.fromARGB(195, 230, 227, 230)
-                            ])),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 30,
+                    child: Container(
+                      width: 180,
+                      height: 130,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(20),
+                            topRight: Radius.circular(20),
+                          ),
+                          gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Color.fromARGB(255, 222, 221, 228),
+                                Color.fromARGB(195, 230, 227, 230)
+                              ])),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            height: 30,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.foodName,
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                widget.foodName,
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
-                              ),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.hotelName,
+                              style: TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                widget.hotelName,
-                                style: TextStyle(
-                                    fontSize: 30, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.rectangle,
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Color.fromARGB(218, 241, 241, 241)),
-                              width: width * 0.7,
-                              height: height * 0.08,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: Color(0xFFfcf4e4),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color.fromARGB(218, 241, 241, 241)),
+                            width: width * 0.7,
+                            height: height * 0.08,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Color(0xFFfcf4e4),
+                                    ),
+                                    child: IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.location_on,
+                                        size: 16,
                                       ),
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.location_on,
-                                          size: 16,
-                                        ),
-                                        color: Color(0xFF756d54),
-                                      ),
+                                      color: Color(0xFF756d54),
                                     ),
                                   ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        widget.location,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 15,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (_) => RatingGuide(
-                                          guideId: widget.uId,
-                                          postId: widget.postId,
-                                        )));
-                              },
-                              child: SizedBox(
-                                width: 120,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Color.fromARGB(48, 255, 255, 255),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      SizedBox(
-                                        height: 45,
-                                        width: 150,
-                                        child: Text('write a review'),
-                                      ),
-                                    ],
-                                  ),
-                                  // TextField(
-                                  //   controller: _foodController,
-                                  //   decoration: InputDecoration(
-                                  //     border: InputBorder.none,
-                                  //     hintText: 'Food Name',
-                                  //   ),
-                                  //   style: TextStyle(
-                                  //     color: Colors.black,
-                                  //     fontWeight: FontWeight.bold,
-                                  //     fontSize: height * 0.03,
-                                  //   ),
-                                  // ),
                                 ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      widget.location,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => RatingGuide(
+                                        guideId: widget.uId,
+                                        postId: widget.postId,
+                                      )));
+                            },
+                            child: SizedBox(
+                              width: 120,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color.fromARGB(48, 255, 255, 255),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      height: 45,
+                                      width: 150,
+                                      child: Text('write a review'),
+                                    ),
+                                  ],
+                                ),
+                                // TextField(
+                                //   controller: _foodController,
+                                //   decoration: InputDecoration(
+                                //     border: InputBorder.none,
+                                //     hintText: 'Food Name',
+                                //   ),
+                                //   style: TextStyle(
+                                //     color: Colors.black,
+                                //     fontWeight: FontWeight.bold,
+                                //     fontSize: height * 0.03,
+                                //   ),
+                                // ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
