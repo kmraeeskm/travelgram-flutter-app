@@ -164,7 +164,13 @@ class _HotelDetailsState extends State<HotelDetails> {
 
   Future<void> makePayment() async {
     try {
-      paymentIntent = await createPaymentIntent('500', 'INR');
+      print(widget.snap['rate'].runtimeType);
+      print(roomcount.runtimeType);
+      print(widget.snap['rate'] * roomcount);
+      int price = (widget.snap['rate'] * roomcount);
+      print(price);
+      print(price.runtimeType);
+      paymentIntent = await createPaymentIntent(price.toString(), 'INR');
       //Payment Sheet
       await Stripe.instance
           .initPaymentSheet(
