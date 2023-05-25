@@ -48,7 +48,8 @@ class _SenderBoxState extends State<SenderBox> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircleAvatar(
-                backgroundColor: Colors.white,
+                radius: 20,
+                backgroundColor: Color.fromARGB(255, 221, 221, 221),
               );
             } else if (snapshot.hasError) {
               return CircleAvatar(

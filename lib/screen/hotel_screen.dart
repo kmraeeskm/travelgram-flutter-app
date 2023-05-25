@@ -18,6 +18,34 @@ import 'package:travelgram/screen/comment_modal_sheet.dart';
 import 'package:travelgram/screen/hotel/hotel_details.dart';
 import 'package:travelgram/utils/show_more.dart';
 
+class Hotel {
+  // final List<String> bookings;
+  // final List<String> subPics;
+  final String description;
+  final String imageUrl;
+  final String location;
+  // final List<dynamic> likes;
+  // final String name;
+  final String postId;
+  final int roomCount;
+  final Timestamp time;
+  final String uId;
+
+  Hotel({
+    // required this.bookings,
+    // required this.subPics,
+    required this.description,
+    required this.imageUrl,
+    required this.location,
+    // required this.likes,
+    // required this.name,
+    required this.postId,
+    required this.roomCount,
+    required this.time,
+    required this.uId,
+  });
+}
+
 class HotelScreen extends StatefulWidget {
   const HotelScreen({Key? key});
 
@@ -26,6 +54,70 @@ class HotelScreen extends StatefulWidget {
 }
 
 class _HotelScreenState extends State<HotelScreen> {
+  final List<Hotel> _foods = [];
+  final List<QueryDocumentSnapshot<Map<String, dynamic>>> _foods2 = [];
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> _foods3 = [];
+  String searchText = "";
+
+  Future<void> _fetchPosts() async {
+    try {
+      final postDocs =
+          await FirebaseFirestore.instance.collection('hotels').get();
+      for (var postDoc in postDocs.docs) {
+        final userId = postDoc['uId'];
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .get();
+        final userData = userDoc.data() as Map<String, dynamic>;
+        // List<String> bookins = [];
+        // final rating = postDoc['rating'].toString();
+        // final ratingC = postDoc['ratingCount'].toString();
+        // final price = postDoc['price'].toString();
+        // for (var x in userData['bookings']) {
+        //   bookins.add(x);
+        // }
+        // print(bookins);
+        final post = Hotel(
+          // subPics: postDoc['subPics'],
+          description: postDoc['description'],
+          // bookings: bookins,
+          imageUrl: postDoc['imageUrl'],
+          location: postDoc['location'],
+          // likes: postDoc['likes'],
+          // name: userData['name'],
+          postId: postDoc['postId'],
+          uId: postDoc['uId'],
+          time: postDoc['time'],
+          roomCount: postDoc['roomCount'],
+        );
+        //thiruvananthapuram,kerala
+        //thriuvananthapuram,kerala
+        _foods.add(post);
+        _foods2.add(postDoc);
+      }
+
+      for (var x in _foods2) {
+        print(x['location']);
+        if (searchText == '' ||
+            x['name'].toLowerCase().contains(searchText.toLowerCase()) ||
+            x['location'].toLowerCase().contains(searchText.toLowerCase())) {
+          _foods3.add(x);
+        }
+      }
+
+      setState(() {});
+    } catch (e) {
+      print('Error fetching posts: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPosts();
+  }
+
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
@@ -59,43 +151,80 @@ class _HotelScreenState extends State<HotelScreen> {
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text.rich(
-              TextSpan(
-                text: 'Find best hotels for\n',
-                style: TextStyle(
-                  fontSize: height * 0.035,
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Your Special Moments!\n',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: height * 0.04,
-                    ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text.rich(
+                TextSpan(
+                  text: 'Find best hotels for\n',
+                  style: TextStyle(
+                    fontSize: height * 0.035,
                   ),
-                ],
+                  children: [
+                    TextSpan(
+                      text: 'Your Special Moments!\n',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: height * 0.04,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: height * 0.65,
-            child: FutureBuilder<QuerySnapshot>(
-              future: FirebaseFirestore.instance.collection('hotels').get(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    cacheExtent: 30,
-                    itemCount: snapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      print(snapshot.data!.docs[index].data());
-                      var post = snapshot.data!.docs[index];
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 8.0,
+                horizontal: 16,
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
+                child: CupertinoSearchTextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchText = value;
+                      _foods3 = [];
+                      for (var x in _foods2) {
+                        print("checked ${x['name']}");
+                        if (searchText == '' ||
+                            x['name']
+                                .toLowerCase()
+                                .contains(searchText.toLowerCase()) ||
+                            x['location']
+                                .toLowerCase()
+                                .contains(searchText.toLowerCase())) {
+                          _foods3.add(x);
+                        }
+                      }
+                    });
+                    for (var x in _foods3) {
+                      print("result ${x['name']}");
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(10.0),
+                  placeholder: 'Search hotels',
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            SizedBox(
+              height: height * 0.65,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  cacheExtent: 30,
+                  itemCount: _foods3.length,
+                  itemBuilder: (context, index) {
+                    var post = _foods3[index];
 
+                    if (searchText == '' ||
+                        post['name']
+                            .toLowerCase()
+                            .contains(searchText.toLowerCase())) {
                       return GestureDetector(
                         onTap: () {
                           Navigator.of(context).push(
@@ -116,14 +245,11 @@ class _HotelScreenState extends State<HotelScreen> {
                           rate: post['rate'],
                         ),
                       );
-                    },
-                  );
-                }
-                return Container();
-              },
+                    } else {}
+                  }),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -422,7 +548,6 @@ class PostBox extends StatelessWidget {
                               children: [
                                 IconButton(
                                   onPressed: () {
-                                    print("what");
                                     showModalBottomSheet(
                                         shape: RoundedRectangleBorder(
                                             borderRadius:

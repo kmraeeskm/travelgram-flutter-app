@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:travelgram/screen/food/Food_details.dart';
 
 class Food {
   final String food;
@@ -11,6 +12,8 @@ class Food {
   final String location;
   final String rating;
   final String ratingCount;
+  final String postId;
+  final String uId;
 
   Food({
     required this.food,
@@ -19,6 +22,8 @@ class Food {
     required this.location,
     required this.rating,
     required this.ratingCount,
+    required this.postId,
+    required this.uId,
   });
 }
 
@@ -58,6 +63,8 @@ class _FoodReccomendationsState extends State<FoodReccomendations> {
           location: postDoc['location'],
           rating: rating,
           ratingCount: ratingC,
+          postId: postDoc['postId'],
+          uId: postDoc['uId'],
         );
         //thiruvananthapuram,kerala
         //thriuvananthapuram,kerala
@@ -98,41 +105,59 @@ class _FoodReccomendationsState extends State<FoodReccomendations> {
                           .contains(searchText.toLowerCase())) {
                     return Padding(
                       padding: const EdgeInsets.all(2.0),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              _foods[index].imageUrl,
-                            ),
-                          ),
-                          Positioned(
-                            top: 5,
-                            left: 5,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => FoodDetails(
+                                foodName: _foods[index].food,
+                                hotelName: _foods[index].hotel,
+                                imageUrl: _foods[index].imageUrl,
+                                location: _foods[index].location,
+                                postId: _foods[index].postId,
+                                rating: _foods[index].rating,
+                                uId: _foods[index].uId,
+                                fromFood: false,
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                        radius: 10,
-                                        backgroundColor: Colors.green[100]
-                                        // NetworkImage(_foods[index].dpurl),
-                                        ),
-                                    Text(
-                                      _foods[index].location,
-                                      style: TextStyle(fontSize: 10),
-                                    )
-                                  ],
+                            ),
+                          );
+                        },
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                _foods[index].imageUrl,
+                              ),
+                            ),
+                            Positioned(
+                              top: 5,
+                              left: 5,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                          radius: 10,
+                                          backgroundColor: Colors.green[100]
+                                          // NetworkImage(_foods[index].dpurl),
+                                          ),
+                                      Text(
+                                        _foods[index].location,
+                                        style: TextStyle(fontSize: 10),
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   }

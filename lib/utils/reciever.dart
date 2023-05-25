@@ -148,9 +148,9 @@ class _RecieverBoxState extends State<RecieverBox> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Placeholder(), // Placeholder while loading
-              );
+                radius: 20,
+                backgroundColor: Color.fromARGB(255, 221, 221, 221),
+              ); // Placeholder while loading
             } else if (snapshot.hasError) {
               return CircleAvatar(
                 backgroundColor: Colors.white,
