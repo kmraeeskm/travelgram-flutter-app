@@ -135,7 +135,7 @@ class _RatingGuideState extends State<RatingGuide> {
                           )
                         : FaIcon(
                             FontAwesomeIcons.star,
-                            color: Colors.white,
+                            color: Colors.grey[300],
                           ),
                   ),
                   GestureDetector(
@@ -152,7 +152,7 @@ class _RatingGuideState extends State<RatingGuide> {
                           )
                         : FaIcon(
                             FontAwesomeIcons.star,
-                            color: Colors.white,
+                            color: Colors.grey[300],
                           ),
                   ),
                   GestureDetector(
@@ -169,7 +169,7 @@ class _RatingGuideState extends State<RatingGuide> {
                           )
                         : FaIcon(
                             FontAwesomeIcons.star,
-                            color: Colors.white,
+                            color: Colors.grey[300],
                           ),
                   ),
                   GestureDetector(
@@ -185,7 +185,7 @@ class _RatingGuideState extends State<RatingGuide> {
                           )
                         : FaIcon(
                             FontAwesomeIcons.star,
-                            color: Colors.white,
+                            color: Colors.grey[300],
                           ),
                   ),
                   GestureDetector(

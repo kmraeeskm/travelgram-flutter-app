@@ -81,9 +81,8 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
   @override
   Widget build(BuildContext context) {
     // print(widget.snap.data);
-    _priceController.text = widget.snap.price;
-    _priceController.text = widget.snap.price;
-    _durationController.text = widget.snap.duration;
+    _priceController.text = '${widget.snap.price} Rs';
+    _durationController.text = '${widget.snap.duration} hrs';
     _descriptionController.text = widget.snap.description;
     _ratingController.text = '${widget.snap.rating} / 5';
 
@@ -262,14 +261,14 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.all(8.0),
+                                        padding: const EdgeInsets.all(4.0),
                                         child: Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
                                             SizedBox(
                                               height: 45,
-                                              width: 50,
+                                              width: 65,
                                               child: TextField(
                                                 enabled: false,
                                                 controller: _priceController,
