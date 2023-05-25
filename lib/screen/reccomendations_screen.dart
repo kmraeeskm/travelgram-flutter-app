@@ -36,7 +36,7 @@ class _ReccomenadtionsScreenState extends State<ReccomenadtionsScreen> {
       extendBody: true,
       appBar: AppBar(
         title: Text(
-          'Travelgram',
+          'Reccomentdations',
           style: TextStyle(
             fontWeight: FontWeight.bold,
           ),
@@ -138,11 +138,7 @@ class PostBox extends StatelessWidget {
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                _buildListItem("Get Reccomendations"),
-                _buildListItem("Share"),
-                _buildListItem("Report"),
-              ],
+              children: <Widget>[],
             ),
           ),
           actions: <Widget>[
@@ -405,7 +401,7 @@ class PostBox extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Text(
                   'Foods here',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(
@@ -422,7 +418,7 @@ class PostBox extends StatelessWidget {
                 alignment: Alignment.topLeft,
                 child: Text(
                   'Guides here',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
               SizedBox(
@@ -431,6 +427,16 @@ class PostBox extends StatelessWidget {
               SizedBox(
                 height: 200,
                 child: GuideReccomendations(location: location),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  'Hotels here',
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                ),
               ),
               SizedBox(
                 height: 10,

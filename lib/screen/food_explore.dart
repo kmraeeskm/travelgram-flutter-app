@@ -146,6 +146,14 @@ class _FoodExploreState extends State<FoodExplore> {
                       _foods[index]
                           .food
                           .toLowerCase()
+                          .contains(searchText.toLowerCase()) ||
+                      _foods[index]
+                          .hotel
+                          .toLowerCase()
+                          .contains(searchText.toLowerCase()) ||
+                      _foods[index]
+                          .location
+                          .toLowerCase()
                           .contains(searchText.toLowerCase())) {
                     return Padding(
                       padding: const EdgeInsets.all(2.0),

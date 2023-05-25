@@ -47,6 +47,8 @@ class _HotelReccomendationsState extends State<HotelReccomendations> {
   Future<void> _fetchPosts() async {
     try {
       String loc = widget.location.toLowerCase();
+      print("loc");
+      print(loc);
       final postDocs = await FirebaseFirestore.instance
           .collection('hotels')
           .where('location', isEqualTo: loc)
@@ -63,7 +65,7 @@ class _HotelReccomendationsState extends State<HotelReccomendations> {
         // final rating = postDoc['rating'].toString();
         // final ratingC = postDoc['ratingCount'].toString();
         // final price = postDoc['price'].toString();
-        for (var x in postDoc['bookings']) {
+        for (var x in userData['bookings']) {
           bookins.add(x);
         }
         print(bookins);

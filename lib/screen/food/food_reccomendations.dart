@@ -87,11 +87,9 @@ class _FoodReccomendationsState extends State<FoodReccomendations> {
                 vertical: 8.0,
                 horizontal: 16,
               ),
-              child: MasonryGridView.builder(
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
                 itemCount: _foods.length,
-                gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                ),
                 itemBuilder: (context, index) {
                   if (searchText == '' ||
                       _foods[index]
