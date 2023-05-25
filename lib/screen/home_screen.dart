@@ -111,7 +111,6 @@ class PostBox extends StatelessWidget {
           GestureDetector(
             onTap: () {
               if (title == "Get Reccomendations") {
-                Navigator.of(context).pop();
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (_) => ReccomenadtionsScreen(
                           postId: pid,
@@ -212,11 +211,11 @@ class PostBox extends StatelessWidget {
                       ),
                     ],
                   ),
-                  GestureDetector(
-                      onTap: () {
-                        _showListAlert(context);
-                      },
-                      child: Icon(Boxicons.bx_dots_horizontal)),
+                  // GestureDetector(
+                  //     onTap: () {
+                  //       _showListAlert(context);
+                  //     },
+                  //     child: Icon(Boxicons.bx_dots_horizontal)),
                 ],
               ),
               SizedBox(

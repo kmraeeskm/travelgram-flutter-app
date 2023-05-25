@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:travelgram/auth/user_provider.dart';
 
 class CommentModalSheet extends StatefulWidget {
   final String postID;
@@ -54,6 +56,8 @@ class _CommentModalSheetState extends State<CommentModalSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final userModel = userProvider.userModel;
     Size size = MediaQuery.of(context).size;
     return SizedBox(
       height: size.height,
@@ -99,8 +103,8 @@ class _CommentModalSheetState extends State<CommentModalSheet> {
           Row(
             children: [
               CircleAvatar(
-                  backgroundColor: Color.fromARGB(255, 224, 223, 223),
-                  child: Container(height: 20, width: 20, child: Text('DP'))),
+                  backgroundImage: NetworkImage(userModel!.photourl),
+                  child: Container(height: 20, width: 20, child: Text(''))),
               SizedBox(
                 width: 10,
               ),

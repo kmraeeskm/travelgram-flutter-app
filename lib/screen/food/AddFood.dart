@@ -108,7 +108,8 @@ class _AddFoodState extends State<AddFood> {
 
     final snapshot = await task!.whenComplete(() {});
     final urlDownload = await snapshot.ref.getDownloadURL();
-    String location = _locationController.text.trim().toLowerCase();
+    String location =
+        _locationController.text.replaceAll(" ", "").trim().toLowerCase();
 
     try {
       await _firestore.collection('foods').doc(postId).set({

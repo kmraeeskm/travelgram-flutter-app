@@ -211,29 +211,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       userModel.type == "hotel"
                           ? Container()
                           : userModel.type == "guide"
-                              ? Container()
-                              : GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => BookMarksPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: Chip(
-                                      label: Row(
-                                    children: [
-                                      // Text(
-                                      //   'Bookmarks',
-                                      //   style: TextStyle(fontSize: 16),
-                                      // ),
-                                      Icon(
-                                        Boxicons.bx_bookmark_heart,
-                                        size: 18,
-                                      ),
-                                    ],
-                                  )),
-                                ),
+                              ? userModel.type == "food"
+                                  ? Container()
+                                  : GestureDetector(
+                                      onTap: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => BookMarksPage(),
+                                          ),
+                                        );
+                                      },
+                                      child: Chip(
+                                          label: Row(
+                                        children: [
+                                          // Text(
+                                          //   'Bookmarks',
+                                          //   style: TextStyle(fontSize: 16),
+                                          // ),
+                                          Icon(
+                                            Boxicons.bx_bookmark_heart,
+                                            size: 18,
+                                          ),
+                                        ],
+                                      )),
+                                    )
+                              : Container(),
                       Text(
                         userModel.username,
                         style: TextStyle(
@@ -411,7 +413,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                                                   'imageUrl'],
                                                               foodName:
                                                                   data['food'],
-                                                              hotelName: rating,
+                                                              hotelName:
+                                                                  data['hotel'],
                                                               location: data[
                                                                   'location'],
                                                               rating: data[

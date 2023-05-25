@@ -8,6 +8,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:travelgram/screen/add_post.dart';
 import 'package:travelgram/screen/explore.dart';
 import 'package:travelgram/screen/food_explore.dart';
+import 'package:travelgram/screen/guide_explore.dart';
 import 'package:travelgram/screen/home_screen.dart';
 import 'package:travelgram/screen/hotel_screen.dart';
 import 'package:travelgram/screen/profile.dart';
@@ -25,6 +26,7 @@ class Index_PageState extends State<IndexPageUser> {
     HomeScreen(),
     FoodExplore(),
     Explore(),
+    GuideExplore(),
     HotelScreen(),
     ProfilePage(),
   ];
@@ -96,7 +98,7 @@ class Index_PageState extends State<IndexPageUser> {
                   onTap(3);
                 },
                 child: AppBarIcon(
-                  iconData: Boxicons.bx_building_house,
+                  iconData: CupertinoIcons.person_crop_circle_badge_checkmark,
                   color: cIndex == 3 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 3 ? Colors.white : Colors.black,
                 ),
@@ -106,9 +108,19 @@ class Index_PageState extends State<IndexPageUser> {
                   onTap(4);
                 },
                 child: AppBarIcon(
-                  iconData: CupertinoIcons.person,
+                  iconData: Boxicons.bx_building_house,
                   color: cIndex == 4 ? Color(0xFFbd91d4) : Colors.white,
                   iconColor: cIndex == 4 ? Colors.white : Colors.black,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  onTap(5);
+                },
+                child: AppBarIcon(
+                  iconData: CupertinoIcons.person,
+                  color: cIndex == 5 ? Color(0xFFbd91d4) : Colors.white,
+                  iconColor: cIndex == 5 ? Colors.white : Colors.black,
                 ),
               ),
             ],

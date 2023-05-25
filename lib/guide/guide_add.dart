@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -93,7 +94,12 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
     });
   }
 
-  Future uploadHostel(VoidCallback hideCallback) async {
+  bool _isloading = false;
+
+  Future uploadHostel() async {
+    setState(() {
+      _isloading = true;
+    });
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     final fileMain = File(pickedFile!.path!);
@@ -132,8 +138,9 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
     } catch (e) {
       print(e.toString());
     }
-
-    hideProgressDialog(hideCallback);
+    setState(() {
+      _isloading = false;
+    });
   }
 
   @override
@@ -435,13 +442,25 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                             width: width * 0.6,
                             height: width * 0.15,
                             child: GestureDetector(
-                              onTap: () {
-                                showProgressDialog(context);
-                                uploadHostel(() {
-                                  hideProgressDialog(() {
-                                    Navigator.of(context).pop();
-                                  });
-                                });
+                              onTap: () async {
+                                await uploadHostel();
+                                final snackBar = SnackBar(
+                                  /// need to set following properties for best effect of awesome_snackbar_content
+                                  elevation: 0,
+                                  behavior: SnackBarBehavior.floating,
+                                  backgroundColor: Colors.transparent,
+                                  content: AwesomeSnackbarContent(
+                                    title: 'Yay',
+                                    message: 'Wait people to contact you now.',
+
+                                    /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                                    contentType: ContentType.success,
+                                  ),
+                                );
+
+                                ScaffoldMessenger.of(context)
+                                  ..hideCurrentSnackBar()
+                                  ..showSnackBar(snackBar);
                               },
                               child: Container(
                                 decoration: BoxDecoration(
@@ -451,10 +470,17 @@ class _AddGuidePlaceState extends State<AddGuidePlace> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Center(
-                                    child: Text(
-                                      'Add now',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                                    child: _isloading
+                                        ? const Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : const Text(
+                                            'Add now',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
                                   ),
                                 ),
                               ),

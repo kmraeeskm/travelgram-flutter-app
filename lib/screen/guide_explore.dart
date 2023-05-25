@@ -1,71 +1,76 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
-import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:travelgram/screen/food/Food_details.dart';
-import 'package:travelgram/screen/home_screen.dart';
+import 'package:travelgram/guide/guide_preview.dart';
 
-class Food {
-  final String food;
-  final String hotel;
+class Guide {
+  final String description;
+  final String duration;
   final String imageUrl;
   final String location;
-  final String rating;
-  final String ratingCount;
-  final String uId;
   final String postId;
+  final String ratingCount;
+  final String price;
+  final String rating;
+  final Timestamp time;
+  final String uId;
 
-  Food({
-    required this.food,
-    required this.hotel,
+  Guide({
+    required this.description,
+    required this.duration,
     required this.imageUrl,
     required this.location,
-    required this.rating,
-    required this.ratingCount,
-    required this.uId,
     required this.postId,
+    required this.ratingCount,
+    required this.rating,
+    required this.price,
+    required this.time,
+    required this.uId,
   });
 }
 
-class FoodExplore extends StatefulWidget {
-  const FoodExplore({super.key});
+class GuideExplore extends StatefulWidget {
+  const GuideExplore({super.key});
 
   @override
-  State<FoodExplore> createState() => _FoodExploreState();
+  State<GuideExplore> createState() => _GuideExploreState();
 }
 
-class _FoodExploreState extends State<FoodExplore> {
-  final List<Food> _foods = [];
+class _GuideExploreState extends State<GuideExplore> {
+  final List<Guide> _foods = [];
   String searchText = "";
 
   Future<void> _fetchPosts() async {
     try {
       final postDocs =
-          await FirebaseFirestore.instance.collection('foods').get();
-
+          await FirebaseFirestore.instance.collection('guides').get();
+      print(postDocs.docs);
       for (var postDoc in postDocs.docs) {
         final userId = postDoc['uId'];
 
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .get();
+        final userDoc =
+            await FirebaseFirestore.instance.collection('users').get();
         final userData = postDoc.data() as Map<String, dynamic>;
         final rating = postDoc['rating'].toString();
         final ratingC = postDoc['ratingCount'].toString();
-        final post = Food(
-          food: postDoc['food'],
-          hotel: postDoc['hotel'],
+        final price = postDoc['price'].toString();
+        final post = Guide(
+          description: postDoc['description'],
+          duration: postDoc['duration'],
           imageUrl: postDoc['imageUrl'],
           location: postDoc['location'],
-          postId: postDoc['postId'],
-          uId: postDoc['uId'],
           rating: rating,
           ratingCount: ratingC,
+          postId: postDoc['postId'],
+          uId: postDoc['uId'],
+          time: postDoc['time'],
+          price: price,
         );
+        //thiruvananthapuram,kerala
+        //thriuvananthapuram,kerala
         _foods.add(post);
       }
 
@@ -108,7 +113,7 @@ class _FoodExploreState extends State<FoodExplore> {
                   });
                 },
                 borderRadius: BorderRadius.circular(10.0),
-                placeholder: 'Search foods/locations/hotels',
+                placeholder: 'Search places',
               ),
             ),
           ),
@@ -126,32 +131,16 @@ class _FoodExploreState extends State<FoodExplore> {
                 itemBuilder: (context, index) {
                   if (searchText == '' ||
                       _foods[index]
-                          .food
-                          .toLowerCase()
-                          .contains(searchText.toLowerCase()) ||
-                      _foods[index]
-                          .hotel
-                          .toLowerCase()
-                          .contains(searchText.toLowerCase()) ||
-                      _foods[index]
                           .location
                           .toLowerCase()
                           .contains(searchText.toLowerCase())) {
-                    return Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (_) => FoodDetails(
-                                    foodName: _foods[index].food,
-                                    hotelName: _foods[index].hotel,
-                                    imageUrl: _foods[index].imageUrl,
-                                    location: _foods[index].location,
-                                    rating: _foods[index].rating,
-                                    postId: _foods[index].postId,
-                                    uId: _foods[index].uId,
-                                  )));
-                        },
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => GuidePreivew(snap: _foods[index])));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
                         child: Stack(
                           children: [
                             ClipRRect(
@@ -196,37 +185,6 @@ class _FoodExploreState extends State<FoodExplore> {
               ),
             ),
           ),
-          // Expanded(
-          //   child: FutureBuilder(
-          //     future: FirebaseFirestore.instance.collection('posts').get(),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.hasData) {
-          //         return MasonryGridView.builder(
-          //             itemCount: snapshot.data!.size,
-          //             gridDelegate:
-          //                 SliverSimpleGridDelegateWithFixedCrossAxisCount(
-          //               crossAxisCount: 3,
-          //             ),
-          //             itemBuilder: (context, index) {
-          //               return Padding(
-          //                 padding: const EdgeInsets.all(2.0),
-          //                 child: ClipRRect(
-          //                   borderRadius: BorderRadius.circular(10),
-          //                   child: Image.network(
-          //                     (snapshot.data! as dynamic).docs[index]
-          //                         ['imageUrl'],
-          //                   ),
-          //                 ),
-          //               );
-          //             });
-          //       } else {
-          //         return Center(
-          //           child: CircularProgressIndicator(),
-          //         );
-          //       }
-          //     },
-          //   ),
-          // ),
         ],
       ),
     );

@@ -201,7 +201,7 @@ class _RatingGuideState extends State<RatingGuide> {
                           )
                         : FaIcon(
                             FontAwesomeIcons.star,
-                            color: Colors.white,
+                            color: Colors.grey[300],
                           ),
                   ),
                 ],
@@ -231,7 +231,13 @@ class _RatingGuideState extends State<RatingGuide> {
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.black,
                 ),
-                child: Center(child: Text('Send')),
+                child: Center(
+                    child: Text(
+                  'Send',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )),
               ),
             ),
             SizedBox(

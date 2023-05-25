@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, sort_child_properties_last
 
 import 'dart:io';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:boxicons/boxicons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -72,29 +73,12 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
-  void hideProgressDialog(VoidCallback hideCallback) {
-    hideCallback();
-  }
+  bool _isloading = false;
 
-  void showProgressDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return FractionallySizedBox(
-          heightFactor: 0.4,
-          child: AlertDialog(
-            title: Text('Posting...'),
-            content: Center(
-              child: CircularProgressIndicator(),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future uploadFile(VoidCallback hideCallback) async {
+  Future uploadFile() async {
+    setState(() {
+      _isloading = true;
+    });
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final user = FirebaseAuth.instance.currentUser!;
     DocumentSnapshot snap = await FirebaseFirestore.instance
@@ -117,7 +101,7 @@ class _AddPostState extends State<AddPost> {
             _locController.text.replaceAll(" ", "").trim().toLowerCase();
         String postId = const Uuid().v1();
         try {
-          _firestore.collection('posts').doc(postId).set({
+          await _firestore.collection('posts').doc(postId).set({
             'postId': postId,
             'uId': user.uid,
             'imageUrl': urlDownload,
@@ -133,7 +117,7 @@ class _AddPostState extends State<AddPost> {
         }
 
         try {
-          _firestore.collection('users').doc(user.uid).update({
+          await _firestore.collection('users').doc(user.uid).update({
             'posts': FieldValue.arrayUnion([postId])
           });
         } catch (e) {
@@ -152,7 +136,7 @@ class _AddPostState extends State<AddPost> {
 
           String postId = const Uuid().v1();
           try {
-            _firestore.collection('hotels').doc(postId).set({
+            await _firestore.collection('hotels').doc(postId).set({
               'postId': postId,
               'uId': user.uid,
               'imageUrl': urlDownload,
@@ -168,7 +152,7 @@ class _AddPostState extends State<AddPost> {
           }
 
           try {
-            _firestore.collection('users').doc(user.uid).update({
+            await _firestore.collection('users').doc(user.uid).update({
               'hotels': FieldValue.arrayUnion([postId])
             });
           } catch (e) {
@@ -177,7 +161,9 @@ class _AddPostState extends State<AddPost> {
         }
       }
     }
-    hideProgressDialog(hideCallback);
+    setState(() {
+      _isloading = false;
+    });
   }
 
   @override
@@ -362,19 +348,45 @@ class _AddPostState extends State<AddPost> {
                 ),
               ),
               const SizedBox(height: 18),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFbd91d4),
+              SizedBox(
+                width: 100,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFbd91d4),
+                  ),
+                  onPressed: () async {
+                    await uploadFile();
+                    Navigator.popUntil(context, (route) => route.isFirst);
+
+                    final snackBar = SnackBar(
+                      /// need to set following properties for best effect of awesome_snackbar_content
+                      elevation: 0,
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.transparent,
+                      content: AwesomeSnackbarContent(
+                        title: 'Yay',
+                        message: 'Post Added',
+
+                        /// change contentType to ContentType.success, ContentType.warning or ContentType.help for variants
+                        contentType: ContentType.success,
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context)
+                      ..hideCurrentSnackBar()
+                      ..showSnackBar(snackBar);
+                  },
+                  child: _isloading
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Add food',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
-                onPressed: () async {
-                  showProgressDialog(context);
-                  await uploadFile(() {
-                    hideProgressDialog(() {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                    });
-                  });
-                },
-                child: Text('upload'),
               ),
             ],
           ),

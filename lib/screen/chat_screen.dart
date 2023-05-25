@@ -35,7 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final user = FirebaseAuth.instance.currentUser!;
   final TextEditingController _message = TextEditingController();
-  final recorder = SoundRecorder();
+  // final recorder = SoundRecorder();
   final firestore = FirebaseFirestore.instance;
 
   final player = SoundPlayer();
@@ -53,8 +53,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    recorder.init();
-    player.init();
+    // recorder.init();
+    // player.init();
     super.initState();
     setData();
   }
@@ -62,8 +62,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void dispose() {
     super.dispose();
-    player.dispose();
-    recorder.dispose();
+    // player.dispose();
+    // recorder.dispose();
   }
 
   Future uploadVoice() async {
@@ -142,7 +142,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool _isrecording = recorder.isRecording;
+    // bool _isrecording = recorder.isRecording;
     CollectionReference users = _firestore.collection('users');
 
     return ChangeNotifierProvider(
@@ -276,41 +276,41 @@ class _ChatScreenState extends State<ChatScreen> {
                           child: Container(
                             child: Row(
                               children: [
-                                Consumer<ChatState>(
-                                    builder: (context, chatState, child) {
-                                  final color = chatState.isIconPressed
-                                      ? Colors.green
-                                      : Colors.transparent;
-                                  return Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: color,
-                                    ),
-                                  );
-                                }),
+                                // Consumer<ChatState>(
+                                //     builder: (context, chatState, child) {
+                                //   final color = chatState.isIconPressed
+                                //       ? Colors.green
+                                //       : Colors.transparent;
+                                //   return Container(
+                                //     width: 10,
+                                //     height: 10,
+                                //     decoration: BoxDecoration(
+                                //       shape: BoxShape.circle,
+                                //       color: color,
+                                //     ),
+                                //   );
+                                // }),
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Consumer<ChatState>(
-                                  builder: (context, chatState, child) {
-                                    final color = chatState.isIconPressed
-                                        ? Colors.blue
-                                        : Colors.grey;
+                                // Consumer<ChatState>(
+                                //   builder: (context, chatState, child) {
+                                //     final color = chatState.isIconPressed
+                                //         ? Colors.blue
+                                //         : Colors.grey;
 
-                                    return IconButton(
-                                      icon: Icon(Icons.mic),
-                                      color: color,
-                                      onPressed: () async {
-                                        chatState.toggleIcon();
-                                        final isRecoring =
-                                            await recorder.toggleRecording();
-                                        // await player.togglePlay(whenFinished: () {});
-                                      },
-                                    );
-                                  },
-                                ),
+                                //     return IconButton(
+                                //       icon: Icon(Icons.mic),
+                                //       color: color,
+                                //       onPressed: () async {
+                                //         // chatState.toggleIcon();
+                                //         // final isRecoring =
+                                //         //     await recorder.toggleRecording();
+                                //         // await player.togglePlay(whenFinished: () {});
+                                //       },
+                                //     );
+                                //   },
+                                // ),
                                 SizedBox(
                                   width: 10,
                                 ),
@@ -345,13 +345,14 @@ class _ChatScreenState extends State<ChatScreen> {
                                     if (!_message.text.isEmpty) {
                                       sendMessage();
                                     } else {
-                                      uploadVoice();
+                                      // uploadVoice();
                                     }
                                   },
                                   child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Color(0xFF6a65fd),
+                                        color:
+                                            Color.fromARGB(255, 228, 165, 219),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.all(5.0),

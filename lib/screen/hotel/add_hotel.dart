@@ -35,9 +35,9 @@ class _AddHotelDetailsState extends State<AddHotelDetails> {
 
   String c = '';
   String p = '';
-  int roomCount = 0;
+  int roomCount = 10;
   bool isNAc = false;
-  int rate = 1000;
+  int rate = 500;
 
   bool isAc = false;
   int AcC = 0;

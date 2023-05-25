@@ -3,8 +3,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:travelgram/screen/food/foodBookings.dart';
 
+import '../../auth/user_provider.dart';
 import 'review_modal_sheet.dart';
 
 class Foods extends StatefulWidget {
@@ -17,6 +19,8 @@ class Foods extends StatefulWidget {
 class _FoodsState extends State<Foods> {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final userModel = userProvider.userModel;
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -78,6 +82,7 @@ class _FoodsState extends State<Foods> {
                       child: FutureBuilder<QuerySnapshot<Map<String, dynamic>>>(
                         future: FirebaseFirestore.instance
                             .collection('foods')
+                            .where('uId', isEqualTo: userModel!.uid)
                             .get(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==

@@ -183,8 +183,8 @@ class PostBox extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 _buildListItem("Get Reccomendations"),
-                _buildListItem("Share"),
-                _buildListItem("Report"),
+                // _buildListItem("Share"),
+                // _buildListItem("Report"),
               ],
             ),
           ),

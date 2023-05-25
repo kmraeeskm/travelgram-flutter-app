@@ -60,6 +60,7 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
   }
 
   Future<Map<String, dynamic>> fetchRatingData() async {
+    print("invoked");
     final documentSnapshot = await FirebaseFirestore.instance
         .collection('comments')
         .doc(widget.snap.uId)
@@ -68,7 +69,12 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
         .get();
 
     final ratingData = documentSnapshot.data();
-
+    print(ratingData);
+    if (ratingData == null) {
+      return {
+        'rating': 0,
+      };
+    }
     return ratingData as Map<String, dynamic>;
   }
 
@@ -121,7 +127,7 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                   child: SizedBox(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Color.fromARGB(48, 255, 255, 255),
+                        color: Color.fromARGB(146, 255, 255, 255),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Column(
@@ -395,8 +401,6 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                               MainAxisAlignment.center,
                                           children: [
                                             SizedBox(
-                                              height: 45,
-                                              width: 50,
                                               child: FutureBuilder<
                                                   Map<String, dynamic>>(
                                                 future: fetchRatingData(),
@@ -415,13 +419,17 @@ class _GuidePlacePreivew extends State<GuidePreivew> {
                                                       ConnectionState.waiting) {
                                                     return CircularProgressIndicator();
                                                   }
+                                                  print("snapshot");
+                                                  print(snapshot);
 
-                                                  final ratingData =
-                                                      snapshot.data ?? {};
+                                                  final ratingData = snapshot
+                                                          .data!['rating'] ??
+                                                      0;
+                                                  print("ratingData");
+                                                  print(ratingData);
 
-                                                  return Text(
-                                                      ratingData['rating']
-                                                          .toStringAsFixed(1));
+                                                  return Text(ratingData
+                                                      .toStringAsFixed(1));
                                                 },
                                               ),
                                             ),

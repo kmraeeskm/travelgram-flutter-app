@@ -1,77 +1,34 @@
 {
   "project_info": {
-    "project_number": "57592599851",
-    "project_id": "travel-mind",
-    "storage_bucket": "travel-mind.appspot.com"
+    "project_number": "142266402287",
+    "project_id": "travelgram-7f2f3",
+    "storage_bucket": "travelgram-7f2f3.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:57592599851:android:a925091c8ce3595362616e",
-        "android_client_info": {
-          "package_name": "com.example.instagram"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA9RUBIHZjhHS8ODikUaIW095DR5Z834ls"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "57592599851-qed076vu9tlhaqdmnbl64kdv459qvdho.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.instagram"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:57592599851:android:829f21dc47fa2d9462616e",
+        "mobilesdk_app_id": "1:142266402287:android:1e98de7cdc38a10cd5e21a",
         "android_client_info": {
           "package_name": "com.example.travelgram"
         }
       },
       "oauth_client": [
         {
-          "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+          "client_id": "142266402287-79koi0o9ku5mq1lmsl1gjpd54rvtlap9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA9RUBIHZjhHS8ODikUaIW095DR5Z834ls"
+          "current_key": "AIzaSyBibi0NUrGbfzEyZv0xzeiI90l0SS3jFOo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "57592599851-3p2a6f1k464cr6moq802liakauvem2cm.apps.googleusercontent.com",
+              "client_id": "142266402287-79koi0o9ku5mq1lmsl1gjpd54rvtlap9.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "57592599851-qed076vu9tlhaqdmnbl64kdv459qvdho.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.instagram"
-              }
             }
           ]
         }

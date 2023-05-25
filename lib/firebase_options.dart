@@ -26,7 +26,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -50,20 +53,10 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyA9RUBIHZjhHS8ODikUaIW095DR5Z834ls',
-    appId: '1:57592599851:android:829f21dc47fa2d9462616e',
-    messagingSenderId: '57592599851',
-    projectId: 'travel-mind',
-    storageBucket: 'travel-mind.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCIxIEGDR5A37QtWdlIGIp_tyJTiLche50',
-    appId: '1:57592599851:ios:f42fb22ae5a271e662616e',
-    messagingSenderId: '57592599851',
-    projectId: 'travel-mind',
-    storageBucket: 'travel-mind.appspot.com',
-    iosClientId: '57592599851-bi15u00qkrjr9vt7vpbnfq7u6dpmsdrm.apps.googleusercontent.com',
-    iosBundleId: 'com.example.travelgram',
+    apiKey: 'AIzaSyBibi0NUrGbfzEyZv0xzeiI90l0SS3jFOo',
+    appId: '1:142266402287:android:1e98de7cdc38a10cd5e21a',
+    messagingSenderId: '142266402287',
+    projectId: 'travelgram-7f2f3',
+    storageBucket: 'travelgram-7f2f3.appspot.com',
   );
 }
